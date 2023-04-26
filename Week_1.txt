@@ -1,0 +1,254 @@
+17/04/2023
+Waterfall vs Agile
+- Goal is to shrink the development cycle. Security, testing etc is done at EVERY stage, no silo or linear progression.
+- Agile involves the client/user at every stage to get quick feedback and clarify expectations. Embrace change and flexibility; incremental/iterative approach; it is an on-going process and launch your current work live and get user feedback (CICD).
+- Consider the advantages and disadvantages of agile too: 
+- Advantages: quick feedback/quick fix; good collaboration/good outcome; 
+- disadvatnages: there is an extra cost to the company in implementing agile - increased time invested in getting cross-functional alignment; not everyone is comfortable to these new practices, e.g. compulsory standups, learning and configuring new CICD tools; people need to be trained; writing tests increases lag in delivery. 
+- !!!Devops brings people together!!! (and that cannot be replaced by AI). Previously, in waterfall, there is a strict division between developers and operations silos; the former hands off to the latter. Now, developers and operations have to work together; representatives from different functions are all present in standup and all have a say in the process, e.g. if dev wants to use a new package, QA have to agree to that too.
+- waterfall development goes in linear stages: requirements-setting is done, then development begins. It is suitable for: requirements are clear and won't change; time constrained projects
+
+Examples of Agile implementations:
+1. scrum
+2. kanban
+
+________________________
+SDLC roles:
+Business Analyst (account managers are responsible for looking for them):
+- Requirements gathering (mobile payment) + specification (use Apple  Pay and Visa)
+- Planning/design of solution
+- Technical BA is a thing
+- Product owner is similar to BA; but they are responsible for one product only. Also it's more front-facing, where you'll talk to the client more.
+
+QA/Testing:
+- Two aspects: QA and User Acceptance testing (UAT). They have different objectives.
+- QA tests the code.
+- UAT ensures that users get the product they want.
+
+
+DevOps:
+1. SE develops the app; QA tests it; Devops releases the software.
+2. SE tries to make sure QA is happy.
+3. DevOps lifecycyle: CICD - Docker+Kubernetes+Jenkins; once passed, provisioning and hosting
+4. CICD: allows for early bug detection. 
+5. Once CICD passes successfully, then DevOps moves to provisioning and config management (Ansible; Terraform)
+5. Once everything is hosted, then on to UAT, e.g. security scans, automated security attacks, penetration testing, monkey testing, smoke testig, red team testing etc. Hosting on the UAT servers AGAIN requires DevOps people to provision and config. 
+- NOTE now DevSecOps is becoming a thing, and security engineers are no longer siloed to the end of the SDLC. The rise of AI makes this even more imperative (because of automation potential expanding to cover security engineering). It's all about shortening the SDLC!
+-  The primary role of DevOps is to take continuous feedback on the process at every step, as it fills the gap between Development and Operation. The large amount of data generated in gathering feedback (e.g. security,
+
+Product support analysts:
+1. Checking if application is running the way its expected to; also that the plaform is still live.
+2. They work with devops.
+3. They are responsible for monitoring the app and if there is a problem, finding the root cause.
+4. When a customer creates a ticket describing a problem (level 1 contact), that gets elevated up to level 2/level 3 - the product support analyst.
+
+DevOps Tools:
+- Jira: ticketing/workflow management (integrates nicely with Trello)
+- Confluence: for documentation (integrates nicely with Jira)
+- Teams vs Slack
+- Maven vs Gradle: build tools
+- Ansible vs puppet: deployment infrastructure configuration/automation
+
+======================================================
+18/04/2023
+SQL
+1. What is a file?
+- An abstraction; it is a container for data to be managed by the file system.
+
+2. What is a file system?
+- When data is created, it is stored in memory. Persistence is achieved via the file system's functions.
+
+3. Resources:
+- Concepts: https://cseweb.ucsd.edu/classes/sp16/cse120-a/applications/ln/lecture15.html
+- Cloud/distributed systems: https://www.hopsworks.ai/post/scalable-metadata-the-new-breed-of-file-systems
+- Further progress: https://www.filesystems.org/
+
+4 What is a database?
+- Provides an interface to one or more database models, e.g. hierarchical; network; entity-relationship
+- In a database model, data has structured (i.e. have relationships)
+- There are also extra features such as ACID, redundancy
+
+5. Relational data model
+- Implements (some) normalisation principles to allow for relational operations.
+
+6. Non-relational data
+
+7. Database design stages - the Peter Chen method for entity-relationship diagrams
+- Conceptual model (e.g. objects and their relations)
+- Logical model (e.g. tables and their columns/attributes) (user-level implementation)
+- Physical model (DBS implementation) (e.g. the types of columns, primary/foreign keys)
+
+8. Unnormalised vs de-normalised data
+- Unnormalised data is normalised to reduce data redundancy and improve data integrity (see more below on types of integrity).
+- De-normalisation is used to improve read performance, at the expense of losing some write performance. It achieves this by adding redundant copies of data or by grouping data.
+- Data warehouses uses de-normalisation principles.
+
+9. Normalisation forms
+- 1NF: One cell has one value (so no storing multiple emails)
+- 2nF: Primary key is only from one column (i.e. no need to combine columns to generate the primary key)
+- 3NF: Within the non-primary attributes, there should not be semantic relationship between any of the items, e.g. NAME;COUNTRY;STATE -> SAMRAT;INDIA;PUNJAB; COUNTRY;STATE is a relationship. This is because within the semantic relationship, there might be a one-to-many relationship (e.g. INDIA;PUNJAB - INDIA;GUJARAT). Separation reduces duplicate data (i.e. repeating the ame country and state many times) and also makes searching easier (instead of looking through each row, you can just start at the separate table and look at its links). 3NF is implemented through foreign keys, e.g. NAME;COUNTRY;COUNTRY ID -> COUNTRY;STATE. 
+
+10. Transactions
+- One single unit of work
+- The LIFECYCLE of a transation:
+- Database transactions should be ACID:
+	- Atomicity: All sub-steps in the procedure must be successful.
+	- Consistency: Everything should be consistent within the database, e.g. when £500 is moved from one account to another, the tables representing the two different accounts should be updated at the same time. A transaction brings the database from one state to another IN ONE STEP. This is of particular concern when concurrency is introduced (see 'Isolation')
+	- Isolation/Concurrency control: Ensures that concurrent execution of transactions leaves the database in the same state that would have been obtained if the transactions were executed sequentially.
+	- Durability: Guarantees that once a transaction has been committed, it will remain committed even in the case of a system failure (e.g., power outage or crash)
+- Use-cases of transactions:
+	- Overkill for single row updates; essential for multiple updates.
+	- when updating/deleting stuff 
+
+	--- transaction  begin
+
+		BEGIN TRANSACTION ;
+
+		UPDATE tableX 
+		SET Balance = Balance + 100
+		WHERE id = 42 ;
+
+		UPDATE tableX 
+		SET Balance = Balance - 100
+		WHERE id = 73 ;
+
+		COMMIT TRANSACTION ;
+
+	--- transaction  end
+
+
+
+11. Querying 
+- CRUD operations(Create, Read, update, Delete)
+- Data definition operators
+	- CREATE, ALTER, DROP, TRUNCATE
+- Data manipulation operators
+	- SELECT, UPDATE, INSERT, DELETE
+	- SELECT is DML because for 'SELECT ... INTO form' or 'SELECT <subcolumns> FROM' u, data is manipulated.
+	- DELETE allows for WHERE conditional in removing rows; TRUNCATE empties all rows. Also, DELETE shows up in transaction logs so you can still roll it back; TRUNCATE does not and is permanent. 
+
+- Data control operators
+	- Gives user administrative control over the DMS
+	- GRANT, REVOKE
+- Transaction control operators (see above)
+	- COMMIT, ROLLBACK,SAVEPOINT
+
+12. RDMS table design
+- Primary key: Unique record identifier; helps maintain ENTITY integrity.
+- Foreign key: An attribute within a table that links to another table; helps maintain REFERENTIAL integrity. Can be null; forieng key simply requires that the value in that field must exist first in a parent table. Null by definition is not a value; it could be that we do not yet know what the value is.
+- Composite key: A key that is comprised of multiple attributes. See: https://dzone.com/articles/mysql-the-problem-with-synthetic-primary-keys
+- Unique key: An attrbitue that uniquely identifies records in another table. CAN ACCEPT NULL. An example is a 'Natural key': Used to give contextual meaning, e.g. stock ticker GOOGL in a NYSE table. Contrast this with 'Surrogate key' (aka 'synthetic' PRIMARY key), which is a key that is manufactured artificially and used to satisfy the requirement that each entity needs a unique representation (sometimes a column can be UNIQUE, but because UNIQUE is NULLABLE it cannot be used as a primary key.
+- Primary vs unique key: Primary keys cannot be changed, whereas unique keys (such as passport number) can be changed. Also the primary key by default creates clustered index. Whereas tje unique key by default creates a non-clustered index.
+
+13. EF Codd rules
+
+======================================================================
+19/04/2023
+Data integrity 
+- Achieved by using constraints and triggers.
+- Especially important when using data modification operators.
+- See: https://www.c-sharpcorner.com/blogs/data-integrityin-sql-server
+
+SQL Constraints
+1. Entity Integrity examples:
+- PRIMARY KEY
+- UNIQUE
+
+2. Referential inntegrity examples:
+- FOREIGN KEY
+- NOT NULL
+- CHECK
+- DEFAULT
+
+
+2. Syntax
+- Defined at the end of a statement:
+CREATE table employee(
+	job_id int,
+	job_title varchar(20),
+	CONSTRAINT pk_job_id PRIMARY KEY(job_id),
+	CONSTRAINT fk_job_title FOREIGN KEY(job_title)
+	REFERENCES roles(title)
+);
+
+CREATE table roles(
+	title varchar(20),
+	rate_hourlly int,
+	CONSTRAINT PRIMARY KEY(title)
+);
+
+ALTER table roles ADD CONSTRAINT constraint_1 CHECK(rate_hourly <= 60);
+
+
+Referential Integrity
+- See: https://learn.microsoft.com/en-us/sql/relational-databases/tables/primary-and-foreign-key-constraints?view=sql-server-ver16
+- https://www.sqlshack.com/delete-cascade-and-update-cascade-in-sql-server-foreign-key/
+
+REFERENCES
+ON UPDATE
+ON DELETE
+(UNLESS there is a TRIGGER)
+
+_____
+
+SQL joins
+________________________
+SQL GROUP BY and Functions 
+
+Aggregate functions:
+- Very useful when used with GROUP BY clause
+- AGGREGATE(function_num, options, array, [k])
+- Function numbers: 
+	1 : AVERAGE
+	2 : COUNT
+		etc
+- You can also create custom aggregate functions.
+CREATE AGGREGATE FUNCTION function_name (parameters) RETURNS return_type
+BEGIN
+      All types of declarations
+      DECLARE CONTINUE HANDLER FOR NOT FOUND RETURN return_val;
+      LOOP
+           FETCH GROUP NEXT ROW; // fetches next row from table
+           other instructions
+      END LOOP;
+END
+
+NOTE cannot use WHERE clause with aggregate function; use HAVING clause instead.
+
+______
+Sub-queries
+
+	SELECT * FROM payment
+	WHERE payment_amount >
+	(SELECT prod_availability FROM product);
+	
+____
+What is an index?
+
+If a query is slow, adding an index can speed things up
+
+CREATE INDEX idx_name ON employee(emp_name);
+
+- look up: compound indexes 
+- careless use of functions in joining & filtering clauses often blocks index use.
+
+unique indexes are a part of data integrity
+___ 
+What is a view?
+- a virtual table which you can refer to s you do not have to write same queries again
+	
+	CREATE VIEW emp_job AS
+		
+		SELECT e.emp_name, j.job_title
+		FROM employee e
+		INNER JOIN emp_roles er ON er.emp_id = e.emp_id
+		INNER JOIN job j ON j.job_id = er.job_id;
+		
+		SELECT * FROM emp_job;
+	
+	DROP view emp_job;
+__
+
+Advanced SQL: https://blog.jooq.org/how-to-fill-sparse-data-with-the-previous-non-empty-value-in-sql/
+
+
