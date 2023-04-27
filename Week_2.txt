@@ -25,7 +25,7 @@ Java:
   - Java Mobile Edition (ME): Used for mobile applications.
 
 Datatypes
-- Primitive vs object types
+- Primitive vs object type vs reference type
 - Primitive types:
   - Byte (a byte is 8-bits; so the values it can represent is 2^8 bits = 256 values). The actual value range is -128 to +127.
   - Boolean: Size of actual boolean value depends on the operating system.
@@ -35,6 +35,18 @@ Datatypes
 	
 	anArray = new int[10];
 	int[] myNum = {10, 20, 30, 40};
+- Reference type are variables that refer to an object on the heap.
+	- If you assign an object to another variable, the reference is passed.
+	e.g. Book b1 = new Book();
+		 Book b2 = b1;
+
+	- b1 and b2 point to the same object. 
+
+Variables:
+- Local: Method-specific variables.
+- Instance: Object-specific variables.
+- Static: Initialised at program execution time (so only once).
+
 
 Java type coercion:
 - e.g.
@@ -115,7 +127,8 @@ Inner Class
 
 - Model class/ POJO (plain old Java Object) class:
 	- Contains private variables and their Getters and Setters.
-	- Javabeans standard forces you to use getters/setters.
+		- Setters allow for mutability.
+		- Javabeans standard forces you to use getters/setters.
 
 5. OOP thinking:
 - 4 pillars of Object-oriented programming:
@@ -219,5 +232,89 @@ void f() {
 }
 
 Totally different story! Since x is now on the heap, its object (that is, the object itself, not a copy of it) could very well continue to live on after x goes out of scope. In fact, the only way it won't continue to live is if x is the only reference to it. If assignments or method calls in the "..." part have created other references that are still "live" by the time x goes out of scope, then that object will continue living.
+
+
+
+=====
+Method overloading
+1. Two methods with the same name, but different parameters. 'Different' means two things:
+- Number of paramters are different.
+	e.g. Book b1 = new Book();
+		 Book b2 = new Book("Harry Potter");
+
+- Parameter datatypes are different.
+	e.g. System.out.println(100);
+				   .println("Hello");
+				   .println(false);
+
+3. Constructor overloading
+- Multiple constructor methods that create objects different based on the arguments passed.
+- Technically any constructor declaration is already overloading, because all classes inherit from 'Object' class, and that class has its own constructor.  
+-  When a class does not have a constructor, the compiler adds a default constructor that takes no arguments, and in the first statement, the compiler inserts a call to super which calls that class' constructor. If the super class constructor has parameters, then you need to provide a constructor with arguments. Object does have such a constructor, so if Object is the only superclass, there is no problem.
+	- No paramaters vs parameterised constructors
+- Invocation of a superclass constructor must be the first line in the subclass constructor.
+- Super class constructor must be invoked first. 
+- What if your abstract class has multiple constructors, e.g. abstract <Plan> extended by <Shopping plan>, <Commercial plan>, <Study plan>?
+	- Static Factory Method: "Static factory method is simply a static method that returns an instance of a class." Effective Java, Joshua Bloch
+
+2. Overloadinng is an example of 'polymorphism'
+- The '*' symbol in C/C++ can be used as a pointer, or for multiplication.
+
+Inheritance:
+- What's the point? Reusability, maintainability and reliability (base class will already be tested).
+- Inheritance represents child class "is-a" relationship between parent class, e.g. 'Dog' is-a 'Animal'.
+- Creating a new class from an existing class.
+	- The inherited class is called a 'child class'. The existing class is called a 'super/parent' class.
+		- In C++, the inherited class is called 'derived class'; the parent class is called a 'base class'.
+- Multi-level inheritance:
+	class A{};
+	class B extends A{};
+	class C extends B{};
+
+- Hierarchical inheritance:
+	class A{};
+	class B extends A{};
+	class C extends A{};
+
+- NOTE Java does not support multitple and hybrid inheritance.
+	- Multiple inheritance (C++ and Python supports this):
+		class A{};
+		class B{}; 
+		class C extends A,B{};
+	- Hybrid inheritance: Combination of multi-level and multiple inheritance.
+
+- Subclass inherits private variables of parent, BUT it cannot access it directly. It must use the parent's accessor methods.
+	- Use 'super' method to refer to parent class members, e.g. super.getVariable('Var');
+
+Abstraction in OOP
+- Abstract class: The process of creating a GENERALISED class with properties and methods common to its subclasses, e.g. 'Animal' class is an abstraction of 'Mammal', 'Reptile' classes etc. 
+- Abstract class can contain default method implementation. Otherwise it will have to declare abstract methods (see above).
+- Abstract classes CANNOT be instantiated - it needs a concrete implementation through subclasses that extend and implement it. Therefore abstract classes do not appear in the heap.
+- An abstract class CAN refer to the subclasess that are extending it. THIS IS AN EXAMPLE OF POLYMORPHISM. To get the subclass, use 'this' keyword to refer to the current object, then call 'this.getClass()' to get the subclass that is created during runtime. 
+
+Fully implemented vs abstract method:
+- For abstract classes, sometimes the method does not make sense at the abstract level but only gets implemented at the child level. So in the abstract class, we only add an abstract method:
+	abstract void do();
+=========
+Annotations 
+- Have no direct effect on the operation of the code they annotate. Their uses are:
+	- Information for the compiler
+	- Compile-time and deployment-time processing: Software tools can process annotation information to generate code, XML files, and so forth.
+	- Runtime processing: Some annotations are available to be examined at runtime.
+
+
+- '@' symbol, aka 'Decorators' in Python.
+- The 'Override' annotation is just a comment - the compiler does not care if you have '@Override' or not. But it is good practice!
+- The same method can appear both super and sublass with identical name and signature. The method that will run depends on which object is called.
+- 'Override' vs 'overloading': 'Override' is a parent/child class concept; 'overload' is 
+- The point of overriding is 
+
+
+
+
+
+
+
+
 
 
