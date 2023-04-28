@@ -45,8 +45,18 @@ Datatypes
 Variables:
 - Local: Method-specific variables.
 - Instance: Object-specific variables.
-- Static: Initialised at program execution time (so only once).
+- Static: Bounded to the class; aka 'shared variable' across all objects of the class. Initialised at program execution time, when the class is loaded into memory (so only once).
+	- Because static members are class-level and not object-level, to access them there is no need to initialise an object of that class first; you can simply call the variable from the class. E.g.
+		
+		class A{
+			static int x = 1;
+		}
 
+		class Call{
+			public static void main(String[] args){
+				System.out.println(A.x);
+			}
+		}
 
 Java type coercion:
 - e.g.
@@ -113,8 +123,12 @@ OOP
   [access-specifier] return-type <methodName>([parameter-list]){
   
   }
-
-
+- Static methods: 
+	- They can only access static variables and other static methods.
+	- Just like static variables, static methods are EXECUTED only once, when the class is loaded into memory.
+	- Static blocks always execute first before the main() method in Java because the compiler stores them in memory at the time of class loading and before the object creation.
+		- This is why 'main' method must be static. 
+		- Therefore static methods do not have (or belong to) any instance you cannot use the "this" reference. 
 
 4. OOP design in Java:
 Static Class
@@ -254,7 +268,8 @@ Method overloading
 	- No paramaters vs parameterised constructors
 - Invocation of a superclass constructor must be the first line in the subclass constructor.
 - Super class constructor must be invoked first. 
-- What if your abstract class has multiple constructors, e.g. abstract <Plan> extended by <Shopping plan>, <Commercial plan>, <Study plan>?
+- What if you want your abstract class to have multiple constructors, e.g. abstract <Plan> extended by <Shopping plan>, <Commercial plan>, <Study plan>?
+	- Don't do it. Use design pattern.
 	- Static Factory Method: "Static factory method is simply a static method that returns an instance of a class." Effective Java, Joshua Bloch
 
 2. Overloadinng is an example of 'polymorphism'
@@ -309,11 +324,52 @@ Annotations
 - 'Override' vs 'overloading': 'Override' is a parent/child class concept; 'overload' is 
 - The point of overriding is 
 
+========
+What is an interface in Java?
 
+ Syntax:
+ 
+	[access-specifier] interface <InterfaceName>{
+		
+		// List of abstract methods
+		
+		// List of PUBLIC, STATIC, FINAL variables
+	
+	}
+	
+- It is a specification of method signatures. You can declare variables in them BUT they must be constant, i.e. public, static, AND final.
+- Java interface can only have ABSTRACT Methods (BUT since Java 8 things have changed - interfaces can also have default and static methods).
+- A class can implement more than one interface at a time. This is how Java supports multiple inehritance (remember, Java does not support multiple inheritance THROUGH CLASSES, but can achieve the same functionality through interfaces).
+- If a class implements an interface it must provide the implementation for ALL abstract mthods which are defined in the interface.
+- How is interface different from abstract class?
+	- Abstract class can contain both abstract and concrete (i.e. with implementation) methods AND constructors; and also variables
+	- 
 
+What is the point of an interface?
+- Interface is like a contract; you MUST implement all methods. 
+- Interface is basically the specification!
+- When to use interface vs abstract class?
+	- Interface gives you flexibility. It also allows for different implementations; it is meant for METHOD reusability.
+	- 
+	- Abstract class is for VARIABLE reusability.
 
+	- 
 
+BEST PRACTICE: Do not include business logic methods in class; include them in an interface and leave it to the subclass to implement it.
+- 'Interface segregation' is the 'I' in SOLID principles.
 
+=======
+Java collections framework
+- Allows for an object that represents a group of objects, NOT primitive types (that would just be a normal array).
+- Provides a set of interfaces such as:
+	- List: Index-based collection; duplicates allowed.
+	- Set: Hash-based indexing; duplicates not allowed.
+	- Map: Key-value pairs (aka Python dictionary)
+- Also contains implementations of the above interfaces:
+- List interface:
+	- ArrayList: Best suited for READ opertaions, not good for ADD or REMOVE.
+	- LinkedList: Node-based collection, where each node maintains the addresses of adjacent nodes. So not good for READ, but good for ADD and REMOVE.
+	- VectorList: Synchronised objects; good for thread programming. 
 
 
 
