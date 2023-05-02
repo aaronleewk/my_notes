@@ -1,0 +1,183 @@
+02/05/2023 Tues
+===============
+Recap:
+Keyword with first letter capitalised, e.g. 'Iterator', can be one of three things:
+- Annotation
+- Interface
+- Class
+
+Keyword preceded by '.' and followed by () can either be:
+- Methods
+- Constructors
+
+==========================
+Best practice: Import only what is necessary, i.e.
+	import java.util.ArrayList;
+NOT
+	import java.util.*;
+==========================
+ArrayList
+- You can add any object to ArrayList.
+- This includes primitive types; they will just be converted into Object type when adding. E.g.
+	ArrayList list = new ArrayList();
+
+	list.add(100);
+	list.add("String");
+
+	for(Object val: list){
+
+	}
+	- But the compiler will raise an alert.
+- IF you know the ArrayList will only contain one type of object, you can declare it via generics:
+	ArrayList<Integer> list = new ArrayList<>();
+
+	list.add(100);
+	list.add(13);
+
+- NOTE the type is 'Integer', not 'int' - the latter is a primitive type.
+	- 'Integer' is a wrapper class.
+	- The automatic conversion between primitive types and their corresponding object wrapper class is called 'autoboxing'; the opposite is 'unboxing'.
+	- Manual autoboxing is not best practice because it has side effects.
+- Generics in Java are known as templates in C++
+
+
+What are generics?
+- Generics means parameterized types. The type of a parameter becomes itself a parameter to methods, classes, and interfaces.
+- Generics enforce type correctness at compile time; it provides safety BEFORE runtime.
+	- To reduce overhead at runtime, the compiler applies a process called type erasure on generics.
+- Generic methods:
+	- have a type parameter (the diamond operator enclosing the type) before the return type of the method declaration.
+	
+		public static <T, G> List<G> fromArrayToList(...) {
+		}
+		- Type parameter cannot be a primitive type.
+		
+		
+	- Type parameters can be bounded: i.e. restrict the types that a method accepts at compile time.
+		- We can specify that a method accepts a type and all its subclasses (upper bound) or a type and all its superclasses (lower bound).
+	- Generic methods can have different type parameters separated by commas in the method signature.
+
+Overload vs generics:
+- Use overload if there will be a separate implementation for each type
+- use generics if you can have a single implementation that works for all possible types, e.g. comparator interface
+
+Resources:
+https://www.oracle.com/technical-resources/articles/java/juneau-generics.html
+
+==============
+Iterators
+- Instead of the enhanced for-loop method shown above, use the 'Iterator' interface:
+	import java.util.Iterator;
+
+	Iterator<Integer> it = list.iterator();
+
+	while(it.hasNext()){
+
+		Integer value = it.next(): // Value will only be loaded into memory when it is called
+
+	}
+
+- ListIterator
+	- Iterator is unidirectional; ListIterator is bidirectional - it has  'hasNext() AND hasPrevious() methods.
+
+- NOTE what is the difference between iterators and enhanced for-loop? 
+- When to use ArrayList vs iterator list?
+========
+Implementation Classes of Set Interface
+- HashSet: does not guarantee insertion order
+- LinkedHashSet: Objects reflect insertion order (BUT they are not sorted)
+- TreeSet: Sorted collection 
+	- implements SortedSet which is an extended version of Set interface:
+	interface Set{}
+	interface SortedSet extends Set{}
+	class TreeSet implements SortedSet{}
+=======
+Implementation classes of Map interface
+- HashMap: Works only within a single thread.
+- Hashtable: it is thread-safe; synchronised across threads.
+- LinkedHashMap: Maintains insertion order
+- TreeMap: Sorted map based on 'Key'; implements SortedMap.
+
+
+=====
+'javap' command, aka 'java parse'
+
+=====
+Uses of 'super' keyword
+- Call super class constructors
+- Invoke super class methods
+- Access super class variables
+
+Uses of 'final' keyword
+- To prevent inheritance (aka to declare FINAL CLASS)
+	final class A {
+
+	}
+
+- To declare constant variables
+- To prevent method overriding
+
+	class A {
+		final void getA(){
+
+		}
+	}
+
+	class B extends A{
+		void getA() // Error
+	}
+
+Uses of 'this' keyword:
+- To access current object's variables
+- To call current object's constructors, or methods. E.g.
+
+	class A{
+		
+		public A(String x){
+			this(x,"my");
+			System.out.println('Hi' + x);
+		}
+
+		public A(String x, String y){
+			System.out.println('Bye' + x);
+		}
+	}
+
+=======
+Polymorphism
+- Use Super Class for flexibility:
+
+List<Animals> ls = new ArrayList();
+
+OR
+
+public static void getItems(List ls){
+	if(ls instanceof ArrayList){
+
+	} else if(ls instanceof Stack{
+
+	}
+}
+
+
+
+
+=========================
+Why do subclasses implement an interface that its superclass also implements?
+E.g. 
+
+HashSet extends AbstractSet; implements Set
+But AbstractSet ALSO implements Set
+
+- Thsi is because explicitly implementing an interface is not the same as implementing it by inheritance. The difference is present in compiled class files and visible via REFLECTION. E.g.,
+
+The interfaces for ArrayList, in the order they were written in the source, are:
+
+interface java.util.List
+interface java.util.RandomAccess
+interface java.lang.Cloneable
+interface java.io.Serializable
+
+- The output does not include interfaces implemented by superclasses, or the superinterfaces of the interfaces. 
+- In particular, Iterable and Collection are not explicitly implemented but their methods are included in ArrayList.
+- Fortunately, this does not affect the type system. The expressions "new ArrayList<>() instanceof Iterable" and "Iterable.class.isAssignableFrom(ArrayList.class)" still evaluate to true.
