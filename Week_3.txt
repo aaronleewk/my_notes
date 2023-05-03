@@ -98,9 +98,12 @@ Implementation classes of Map interface
 - LinkedHashMap: Maintains insertion order
 - TreeMap: Sorted map based on 'Key'; implements SortedMap.
 
+Properties of Hashmap: Does not having a guaranteed order; BUT this does not mean having a random order!
+	- See: https://peterchng.com/blog/2022/06/17/what-iteration-order-can-you-expect-from-a-java-hashmap/#:~:text=Conclusion-,While%20the%20iteration%20order%20of%20a%20Java%20HashMap%20is%20undefined,predictable%20and%20thus%20quite%20biased.
 
 =====
-'javap' command, aka 'java parse'
+To find out the APIs available for a class, use 'javap' command, aka 'java parse'
+- This prints out the methods within the class, e.g. "javap java.io.FileOutputStream"..
 
 =====
 Uses of 'super' keyword
@@ -129,7 +132,7 @@ Uses of 'final' keyword
 
 Uses of 'this' keyword:
 - To access current object's variables
-- To call current object's constructors, or methods. E.g.
+- From within a constructor, you can also use the "this" keyword to call another constructor in the same class. Doing so is called an explicit constructor invocation. E.g.
 
 	class A{
 		
@@ -142,6 +145,7 @@ Uses of 'this' keyword:
 			System.out.println('Bye' + x);
 		}
 	}
+- 
 
 =======
 Polymorphism
@@ -158,7 +162,6 @@ public static void getItems(List ls){
 
 	}
 }
-
 
 
 
@@ -181,3 +184,219 @@ interface java.io.Serializable
 - The output does not include interfaces implemented by superclasses, or the superinterfaces of the interfaces. 
 - In particular, Iterable and Collection are not explicitly implemented but their methods are included in ArrayList.
 - Fortunately, this does not affect the type system. The expressions "new ArrayList<>() instanceof Iterable" and "Iterable.class.isAssignableFrom(ArrayList.class)" still evaluate to true.
+
+=========================
+Exceptions
+- Event that is not under our control.
+- A runtime error
+
+Types of Exceptions
+- In general, two types: predefined; user defined. BUT PARTICULAR TO JAVA:
+	- Checked exceptions: Must be handled or "declared to be thrown" (compiler forces the user to consider them).
+		- These exceptions are checked by the compiler. But exceptions are runtime only right?
+			- The compiler forces you to handle the exception. Exceptions still occur in runtime, i.e. exceptions are thrown by runtime.
+		- Aside from "RuntimeException" classes, everything else under "Exception" in the class hierarchy is checked.
+			- For the full exception hierarchy, see: https://www.scaler.com/topics/arithmetic-exception-in-java/ or https://java8.info/flowcontrol/exceptionover.html
+	- Unchecked exceptions:
+		- Not required to be handled (see below for why).
+		- Not checked by the compiler hence 'unchecked'.
+		- e.g. Expressions are parsed at runtime, so "10/0" will not yield any compiler error; the error will only be raised when you run the program.
+		- Classes that inherit from "RuntimeException" belong to unchecked exceptions.
+
+Why enforce checked exceptions?
+- Any Exception that can be thrown by a method is part of the method's public programming interface. Those who call a method must know about the exceptions that a method can throw so that they can decide what to do about them. These exceptions are as much a part of that method's programming interface as its parameters and return value.
+- On the other hand, unchecked exceptions are runtime exceptions; they represent problems that are the result of bad programming, and as such, the API client code cannot reasonably be expected to RECOVER from them or to handle them in any way.
+	- "Recovery" here means just trying again with a different input, e.g. new file, NOT changing the code itself.
+- If a client can reasonably be expected to recover from an exception, make it a checked exception. If a client cannot do anything to recover from the exception, make it an unchecked exception.
+- From: https://docs.oracle.com/javase/tutorial/essential/exceptions/runtime.html
+
+Clauses of exeption handling:
+- "try" block: "try" block contains the statements that are expected to throw an exception; "catch" is the common response, but the below are also possible:
+- "throw": Manual exception raising.
+	- "throws": Used as part of a method declaration/definition to indicate that the method may throw an exception.
+- "finally": This block WILL ALWAYS run when the "try" block exits, regardless if an exception was triggered. 
+- Alternatively, the "try with-resources" statement:
+	try (FileInputStream inputStream = new FileInputStream(path);) {
+
+	}
+	- Automatically closes all resources.
+
+Syntax:
+	try{
+
+	}
+	catch(<Exception class name 1> <reference to exception object>){
+		<Error message>
+	}
+	catch(<Exception class name 2> <reference to exception object>){
+
+	}
+- NOTE try block can be nested.
+
+e.g.
+	try{
+		int a = Integer.parseInt(args[0]);
+		int b = Integer.parseInt(args[1]);
+
+		if(b==0){
+			throw new ArithmeticExcetion("b value cannot be 0"); //ArithmeticException should be UNCHECKED!!
+		}
+		System.out.println(a/b);
+	}
+	catch(ArithmeticException e){
+		System.out.println(e.getMessage());
+	}
+	finally{
+		
+	}
+
+Who handles the exception?:
+- Exceptions MUST be handled by "try...catch" construct.
+- If your method just throws an error without handlinng it, then you need to use "throws" keyword.
+	- This is relevant because a lot of external methods use "throws", e.g.
+		FileOutputStream os = new FileOutputStream();
+		os.close() // will raise an error because "close" method has "throws" which must be handled, even if not triggered in your particular use-case.
+- Checked exceptions need:
+	- Either to be handled locally, in a try/catch block
+	- Or to be propagated "upwards", by defining the exception in the method signature, i.e. "throws"
+e.g.
+
+class Demo{
+	public static void main(String[] args){
+		doThis();
+	}
+
+	public static void doThis(){
+		doThat();
+	}
+
+	public static void doThat(){
+		try{
+			throw new ClassNotFoundException();
+		}
+		catch(Exception e){
+			System.out.println(e.getMessage());
+		}
+	}
+	
+	public static void doThis2(){
+		try{
+			doThat2();
+		}
+		catch(Exception e){
+
+		}
+	}
+
+	public static void doThat2() throws ClassNotFoundException{
+		throw new ClassNotFoundException();
+	}
+}
+
+try block can have one or more catch statements.
+try block must have at least one "catch" or "finally" block.
+
+======================
+File handling
+
+What is a stream?
+- A sequence of bytes.
+- Types of streams: 
+	- Input: Read
+	- Output: Write
+
+Java stream classes:
+- Byte steam class: DOES NOT support Unicode characters (2 bytes); deals with single bytes only, e.g. "String".getBytes().
+- Character stream class: Supports Unicode (2 bytes)
+- BOTH support read + write operations.
+
+BufferedReader
+- Stream classes go element-by-element (e.g. byte by byte; char by char).
+- BufferedReader collects the elements into one block which allows you to read line-by-line.
+- BufferedReader is a helper; it cannot access file system directly. It needs a class with an output method. E.g.
+
+class FileInputStreamDemo{
+	public static void main(String[] args){
+		try{
+			FileInputStream is = new FileInputStream("file1.txt");
+			
+			BufferedReader br = new BufferedReader(new InputStreamReader(is));
+			
+			//FileReader is = new FileReader("file1.txt");
+
+			//BufferedReader br = new BufferedReader(is);
+
+			String line = null;
+			
+			while( (line = br.readLine()) != null){ // null indicates EOF 
+				System.out.println(line);
+			}		
+		}
+		catch(FileNotFoundException e){
+			System.out.println(e);
+		}
+		catch(IOException e){
+			System.out.println(e);
+		}
+	}
+}
+
+Better version:
+class FileInputStreamDemo{
+	public static void main(String[] args){
+		func();
+	}
+
+	func() throws IOException {
+		try (FileReader file = new FileReader("file1.txt");
+			BufferedReader br = new BufferedReader(file)) {
+			String line = null;
+			
+			while( (line = br.readLine()) != null){ // null indicates EOF 
+				System.out.println(line);
+			}	
+		}
+	}	
+}
+
+Serialisation
+- A process of storing object state. It is converted into a byte stream.
+- The opposite is deserialisation: Restoring object state by reading a byte stream.
+- The class MUST implement "Serializable" interface to be serialised:
+
+	class <> implements Serializable{}
+
+- The serialisation process is implemented by "ObjectOutputStream" class:
+
+	FileOutputStream file = null;
+
+	try{	// Can also use "try with-resources" 
+		Student s1 = new Student(2,"New student"); // Object
+	
+		file = new FileOutputStream("student-objects"); // File to save object
+		ObjectOutputStream oos = new ObjectOutputStream(file);
+	
+		oos.writeObject(s1);
+	}
+	catch(FileNotFoundException e){
+			System.out.println(e);
+	}
+	catch(IOException e){
+		System.out.println(e);
+	}
+	finally{
+		try{			
+			os.close();
+		}
+		catch(IOException e){
+			System.out.println(e);
+		}	
+		
+	}
+
+
+
+
+
+
+
