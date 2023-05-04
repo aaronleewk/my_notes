@@ -44,6 +44,7 @@ Datatypes
 
 Variables:
 - Local: Method-specific variables.
+	- Local variables do not get default values. Their initial values are undefined. Before you can use local variables they must be initialized.
 - Instance: Object-specific variables.
 - Static: Bounded to the class; aka 'shared variable' across all objects of the class. Initialised at program execution time, when the class is loaded into memory (so only once).
 	- Because static members are class-level and not object-level, to access them there is no need to initialise an object of that class first; you can simply call the variable from the class. E.g.
@@ -205,7 +206,7 @@ public void Method1()
 
 
 - Each thread gets a stack, while there's typically only one heap for the application.
-	- A thread is a sequential flow of control. This sounds like processes!
+	- A thread is a sequential flow of control. This sounds like processes! But...
 	- The difference: threads run in a shared memory space within ONE process;  processes run in separate memory spaces.  (See history: http://www.serpentine.com/blog/threads-faq/the-history-of-threads/)
 
  
@@ -339,7 +340,7 @@ What is an interface in Java?
 	
 - It is a specification of method signatures. You can declare variables in them BUT they must be constant, i.e. public, static, AND final.
 - Java interface can only have ABSTRACT Methods (BUT since Java 8 things have changed - interfaces can also have default and static methods).
-- A class can implement more than one interface at a time. This is how Java supports multiple inehritance (remember, Java does not support multiple inheritance THROUGH CLASSES, but can achieve the same functionality through interfaces).
+- A class can implement more than one interface at a time. This is how Java supports multiple inheritance (remember, Java does not support multiple inheritance THROUGH CLASSES, but can achieve the same functionality through interfaces).
 - If a class implements an interface it must provide the implementation for ALL abstract mthods which are defined in the interface.
 - How is interface different from abstract class?
 	- Abstract class can contain both abstract and concrete (i.e. with implementation) methods AND constructors; and also variables

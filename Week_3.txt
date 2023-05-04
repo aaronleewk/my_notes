@@ -42,7 +42,7 @@ ArrayList
 
 
 What are generics?
-- Generics means parameterized types. The type of a parameter becomes itself a parameter to methods, classes, and interfaces.
+- Generics means parameterised types. The type of a parameter becomes itself a parameter to methods, classes, and interfaces.
 - Generics enforce type correctness at compile time; it provides safety BEFORE runtime.
 	- To reduce overhead at runtime, the compiler applies a process called type erasure on generics.
 - Generic methods:
