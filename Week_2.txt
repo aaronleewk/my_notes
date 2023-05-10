@@ -302,6 +302,10 @@ Inheritance:
 - Subclass inherits private variables of parent, BUT it cannot access it directly. It must use the parent's accessor methods.
 	- Use 'super' method to refer to parent class members, e.g. super.getVariable('Var');
 
+NOTE polymorphism is to do with CONCRETE classes; abstraction is to do with ABSTRACT classes and interfaces. 
+- 
+- Thus the idea of "design by contract" is to do with "abstraction", not "polymorphism".
+
 Abstraction in OOP
 - Abstract class: The process of creating a GENERALISED class with properties and methods common to its subclasses, e.g. 'Animal' class is an abstraction of 'Mammal', 'Reptile' classes etc. 
 - Abstract class can contain default method implementation. Otherwise it will have to declare abstract methods (see above).
@@ -322,7 +326,8 @@ Annotations
 - '@' symbol, aka 'Decorators' in Python.
 - The 'Override' annotation is just a comment - the compiler does not care if you have '@Override' or not. But it is good practice!
 - The same method can appear both super and sublass with identical name and signature. The method that will run depends on which object is called.
-- 'Override' vs 'overloading': 'Override' is a parent/child class concept; 'overload' is 
+- 'Override' vs 'overloading': 'Override' is a parent/child class concept part of 'polymorphism'; 'overload' is when you wish to support different types, but the functionality of the method IS THE SAME. 
+	- Polymorphism is the ability of one type, A, to appear as and be used like another type, B. So, method overloading as such is not considered part of polymorphism, as the overloads are defined as part of one type.
 - The point of overriding is 
 
 ========
@@ -343,7 +348,8 @@ What is an interface in Java?
 - A class can implement more than one interface at a time. This is how Java supports multiple inheritance (remember, Java does not support multiple inheritance THROUGH CLASSES, but can achieve the same functionality through interfaces).
 - If a class implements an interface it must provide the implementation for ALL abstract mthods which are defined in the interface.
 - How is interface different from abstract class?
-	- Abstract class can contain both abstract and concrete (i.e. with implementation) methods AND constructors; and also variables
+	- Abstract class can contain both abstract and concrete (i.e. with implementation) methods AND constructors; 
+	- Abstract class also contains variables.
 	- 
 
 What is the point of an interface?

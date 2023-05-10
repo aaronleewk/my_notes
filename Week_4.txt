@@ -1,0 +1,134 @@
+10/05/2023
+===========
+Post-java assessment comments:
+- Introduction
+- Planning
+- Roadblocks
+- Improvements
+- User manual (how to use; compiler version; required dependencies; etc)
+
+==========
+String handling:
+- What is "String" in Java?
+	- An immutable class object. I.e. its state does not change.
+	- There is a difference between;
+
+	String s1 = "hi";
+	String s2 = new String("hi"); // Does not equal s1 as the two object refs are different.
+
+	vs
+
+	String s3 = "hi";
+	String s4 = "hi"; // Equals to s3 as jvm checks string constant pool to see if object with this value exists; if so, then that object ref is assigned to s4.
+
+- When a string method is called, the result is stored in a new object. So:
+
+	s3.toUpperCase(); // Creates new object, but no variable to store object ref.
+
+	String s3 = s3.toUpperCase(); // NOW s3 no longer equls to s4
+
+- Use StringBuffer if you want to keep adding new chars.
+	- It is a mutable class object.
+	- It is thread-safe and synchronised.
+
+- StringBuilder class
+	- ALSO a mutable class object, BUT
+	- It is NOT thread-safe
+	- Introduced in Java 7
+
+==========
+Inner Classes
+- "Private" classes are not allowed, UNLESS they are an inner class.
+- Introduced in Java 7
+- Inner classes will have their own class file in the form "Outer$Inner.class".
+- They are generally used to add an additional encapsulation layer where we can write localised logic.
+- Inner classes act as helper classes.
+- Types 
+	- Non-static
+	- Static
+	- Local
+	- Anonymous
+- Syntax:
+	class Outer{
+		class Inner{ // default status, i.e. without access modifier, is non-static
+
+		}
+
+		static class SInner{
+
+		}
+
+		void method(){
+			class LocalInnerClass{
+
+			}
+		}
+	}
+
+- NOTE: An inner class can access all members of its outer class, including those with "private" declaration.
+	class Outer{
+		private int x = 100;
+
+		class Inner{
+			void getX(){
+				System.out.println(x); // This is valid.
+			}
+		}
+
+		static class SInner{
+			void getX(){
+
+			}
+		}
+	}
+
+- Accessing inner class:
+	For static inner class:
+	Outer.SInner sinner = new Outer.SInner();
+
+	For other inner class types:
+	class InnerClassDemo{
+		public static void main(String[] args){
+			Outer outer = new Outer();
+			Outer.InnerClass inner = outer.new InnerClass(); // Cannot directly access inner class; must instantiate the outer class first, THEN use that object to access the inner.
+		}
+	}
+
+==================
+Anonymised inner class
+- Localised implementation of interfaces
+	inteface Service{
+		public Provide(int a);
+	}
+
+	public class AnonymousClassDemo{
+		Service s = new Service(){ // Class file would be named "AnonymousClass$1" as the inner class does not have a implementation name
+			public Provide(int a){
+				System.out.println("Hello world");
+			}
+		};
+	}
+
+================
+Lambda Expression/Function
+- A shorter version of Java method.
+- Syntax of method:
+	- Access specifier (optional)
+	- Return type
+	- Method name
+	- Method parameter (optional)
+	- Method body	
+- Lambda expressions do not need 1,2,3 from the above syntax list. Hence why it is also known as anonymous function.
+	Syntax: (method parameters) -> (method body))
+- It is an alternative to anonymous inner class.
+- Introduced in Java8. Example:
+	class Java8Features{
+		public static void main(String[] args){
+			List<String> cities = new ArrayList<>();
+			
+			cities.stream()
+				  .filter(city -> city.startsWith("L"))
+				  .forEach(city -> System.out.println(city));
+		}
+	}
+- "map" is for transformation, e.g. cities.map(city -> city.toUpperCase())
