@@ -42,10 +42,22 @@ Inner Classes
 - Introduced in Java 7
 - Inner classes will have their own class file in the form "Outer$Inner.class".
 - They are generally used to add an additional encapsulation layer where we can write localised logic.
-- Inner classes act as helper classes.
+
+	class Outer{
+
+		IClass iclass = new IClass(){ 
+			public int add(int a, int b){
+				return a + b;
+			}
+		}
+
+		System.out.println(iclass.add(1,2));
+	}
+	
+- Inner classes can also act as helper classes.
 - Types 
 	- Non-static
-	- Static
+	- Static (static classes can ONLY exist as inner classes)
 	- Local
 	- Anonymous
 - Syntax:
@@ -110,7 +122,7 @@ Anonymised inner class
 	}
 
 ================
-Lambda Expression/Function
+Lambda Expressions: The semantics
 - A shorter version of Java method.
 - Syntax of method:
 	- Access specifier (optional)
@@ -119,8 +131,8 @@ Lambda Expression/Function
 	- Method parameter (optional)
 	- Method body	
 - Lambda expressions do not need 1,2,3 from the above syntax list. Hence why it is also known as anonymous function.
-	Syntax: (method parameters) -> (method body))
-- It is an alternative to anonymous inner class.
+	Syntax: (method parameters) -> (method body)
+- It is an alternative to anonymous inner class (see: implementation below).
 - Introduced in Java8. Example:
 	class Java8Features{
 		public static void main(String[] args){
@@ -132,3 +144,388 @@ Lambda Expression/Function
 		}
 	}
 - "map" is for transformation, e.g. cities.map(city -> city.toUpperCase())
+
+========
+Lambda Expressions: The implementation
+- Every lambda expression is always associated with a functional interface; every lambda expression is just an anonymous inner class.
+
+	interface IClass{ // This is a functional interface
+
+		public int add(int a, int b)
+
+	}
+
+	class Outer{
+
+		IClass iclass = (a, b) -> a + b; // lambda expression knows which method this is, because the interface only has one abstract method.
+
+		System.out.println(iclass.add(1,2));
+	}
+
+- FUNCTIONAL INTERFACE: Lambda expression is only allowed for interfaces with ONE abstract method
+- Java 8 introduced functional interfaces.
+	- Existing interfaces have multiple abstract methods.
+	- People were changing their interfaces to become functional interfaces, but what would happen to the existing methods? The "default" and "static" methods were introduced which allows for methods to be declared without being implemented, for backwards compatibility.
+
+	***** Behind the scenes *********
+	class Java8Features{
+		public static void main(String[] args){
+			List<String> cities = new ArrayList<>("London","Leeds","Dubai");
+			
+			cities.stream()
+				  .filter(city -> city.startsWith("L"))
+				  .forEach(new Consumer<String>(){
+					
+					public void accept (String city){
+						System.out.println(city);
+					}
+			   	   })
+		}
+	}
+
+	***** Now with lambda expression *********
+
+	import java.util.function.Consumer; // Accepts one method "accept" and returns void
+
+	class Java8Features{
+		public static void main(String[] args){
+			Map<String, Int> cities = new HashMap<>();
+
+			cities.put("Mary", 1234);
+			cities.put("John", 4321);
+			
+			cities.forEach( (k, v) -> System.out.println(k + ": " + v)); // This is the lambda expression that replaces anonymous classes
+		}
+	}
+
+
+- For "filter", the source code implements a functional interface with the below semantics:
+
+	cities.stream()
+		  .filter( new Predicate<String>(){
+							public boolean test(String city){
+								return city.startsWith("L");
+							}
+					   })
+
+- For "map", this is what happens behind the scenes:
+
+	cities.stream()
+		  .map( new Function<String,String>(){
+							public String apply(String city){
+								return city.toUpperCase();
+							}
+					   }
+				)
+
+===============
+Stream Pipeline
+- Comprised of the following components:
+	- SINGLE data source (has to be ONLY ONE)
+		- Java collections
+	- Intermediate operations (0 operations or more)
+		- filter, map, peek, reduce etc
+	- Terminal operation (ONLY ONE) (does not return "Stream" object; instread returns a data source)
+		- forEach
+		- toList
+		- count
+		- sum
+- Streams are lazy evaluated and single-use:
+ 
+	import java.util.stream.Stream;
+
+	ArrayList<String> lst = new ArrayList(Arrays.toList("London","Leeds","Dubai"));
+
+	Stream<String> baseStream = lst.stream();
+
+	List<String> var = baseStream.filter(elmt -> elmt.startsWith("R"))
+			  ...
+			  .collect(Collections.toList());
+	
+	// The below will return an error, as a stream can only be consumed once.
+	baseStream.filter(elmt -> elmt.startsWith("L")) 
+
+- Types of streams since Java 8:
+	- Sequential
+		- This is the default
+	- Parallel
+		- Used for better performance
+		- Non-deterministic output
+
+
+==========
+Data & Time API
+- What was wrong with Date & Time API in Java 6?
+	- Used to be: java.util.Date
+- How did Java 8 improve it?
+	- Now: java.time
+
+- LocalDate object
+	- Deals with Date info only
+	- Year : Month : Day of Month
+- LocalTime
+	- Deals with Time info only
+	- Hours : Minutes : Seconds : illiseconds : Nanoseconds
+- LocalDateTime
+	- Deals with Date and Time
+
+- BUT cannot instantiate these objects, i.e. new LocalDate(); is NOT allowed.
+- To create:
+	LocalDate date = LocalDate.now(); // Value depends on local machine
+
+- Date & Time objects are immutable, i.e. date.plusDays(7) will not return next week's date.
+	- Needs: date = date.plusDays(7);
+
+- To create your own date object: 
+	LocalDate eventDate = LocalDate.of(2023,6,15);
+
+- "Instance" class and "Duration" class
+
+==========
+Enums
+- Enum is a list of named constants (that are String values)
+	enum OrderType{
+		BUY,
+		SELL
+	}
+
+	enum PropertyType{
+		
+	}
+
+- Why use them? They are better than strings.
+	- Prior to Java 6, Strings were not accepted in switch cases.
+	
+	switch(charac){
+
+		case "a":
+			
+		case "e":
+			
+		case "i":
+			
+		case "o":
+			
+		case "uwu": // if you hardcode the string, you could spell it wrong.
+	}
+
+	// Use enums instead
+
+- "Enums" can be stored in a separate file, or even package.
+=============
+Design Patterns
+- Strategies to create usuable solutions:
+
+- Singleton class
+	- Used to create expensive objects, i.e. objects that contain objects that consume more resources, e.g. configuration, database connections.
+	- Steps:
+		- Declare static field 
+		- Private constructor (restricts instantiation of the class)
+		- Static method which creates singleton instance AND RETURNS IT.
+
+	class DatabaseConnection{
+		private static DatabaseConnection con;
+
+		private DatabaseConnection(){ // Have to declare this, otherwise compile-enforced constructor is always public
+
+		}
+
+		public static DatabaseConnection getInstance(){
+			if(con == null){ // Cannot use "this.con" because "con" is static; does not belong to object but to the class.
+				con = new DatabaseConnection();
+			}
+			return con;
+		}
+	}
+
+	class SingletonDemo{
+	public static void main(String[] args){
+		DatabaseConnection db1 = DatabaseConnection.getInstance();
+		DatabaseConnection db2 = DatabaseConnection.getInstance();
+	
+		System.out.println(db1.hashCode()); // Use "hashCode" method to check if the object refs are the same.
+		System.out.println(db2.hashCode());
+
+	}}
+
+- Dependency Injection (it is related to "factory" pattern)
+	class Address{
+
+	}
+
+	public class Customer{
+		private int customerId;
+		private Address address; // This is class dependency
+			// "Customer" depends on "Address". "Customer" is a dependent class.
+
+		// This is bad code:
+		public void createAddressObject(){
+			add = new Address();
+			// This is because if "Address" changes its constructor, then "Customer" will break. The two classes are "strongly coupled".
+			// Do not create classes in dependent class.
+		}
+
+		// USE DEPENDENCY INJECTION INSTEAD:
+		public Customer(int customerId, Address address){
+			this.customerId = customerId;
+			this.address = address;
+		// Dependency injection creates "loosely coupled" classes.
+		}
+	}
+
+
+- Factory
+	- Creates objects; acts as a repository of objects.
+		- So if a class changes, all you need to update is the factory class method which creates objects from that class.
+	- Generally contains static methods.
+
+	public class CusomterFactory{
+
+		public static Address getAddressInstance(){
+			Address address = new Address():
+
+			return address;
+		}
+
+		public static Customer getCustomerObject(){
+			Customer c1 = new Customer(1,getAddressInstance());
+			return c1;
+		}
+	}
+
+	class FactoryPatternDemo{
+		public static void main(String[] args){
+			Customer c1 = CustomerFactory.getCustomerObject();
+		}
+	}
+
+
+- MVC
+	- Model: Represents the current state(i.e. the data) of an application
+		- They are represented by classes.
+		- Must NOT contain business logic.
+	- View: The presentation or UI logic.
+	- Controller: Similar to the server. It processes requests/command interpreter. Mediates beteen the client and the other layers of the application.
+
+- Service
+	- Allows us to write business logic.
+	- It might look very similar to "controller".
+	- The difference is service layer can do business logic, e.g. encryption.
+	- Controller can also decide which service out of many to choose.
+		- Also controllers are just classes; never have there been interfaces for them.
+
+- DAO Pattern (data access object)
+	- Used to write persistsence logic. 
+
+- Sample application architecture:
+
+	Database/In memory <- DAO <- Service Layer <- Controller
+=========
+What is a package in Java?
+- Compartmentalises a group of related class files.
+- Packages avoid class name collisions.
+
+	package com.ab.daos; //com folder -> ab folder -> daos class
+	import com.ab.models.Employee;
+	import java.util.List;
+
+	public interface EmployeeDAO{
+		public void registerEmployee(Employee employee);
+		public List<Employee> getAllEmployees();
+		public List<Employee> getAllEmployeesByFirstName();
+	}
+
+
+	javac -d . EmployeeDAO.java // . is current directory, but any address would do.
+
+	package com.ab.daos; 
+	import com.ab.models.Employee;
+	import java.util.List;
+
+	public class EmployeeDAOInMemoryImpl implements EmployeeDAO{
+
+		private List<Employee> employees;
+
+		public EmployeeDAOInMemoryImpl(){
+			employees = new ArrayList<>();
+		}
+
+		@Override
+		public void registerEmployee(Employee employee){
+			this.employees.add(employee);
+		}
+
+		@Override
+		public List<Employee> getAllEmployees(){
+			return this.employees;
+		}
+
+		@Override
+		public List<Employee> getAllEmployeesByFirstName(String firstName){
+			return this.employees.stream()
+					.filter(e -> e.getFirstName().equals(firstName))
+					.collect(Collectors.toListi());
+		}
+	}
+
+	______
+	public interface EmployeeService{
+		public void registerEmployee(Employee employee);
+		public List<Employee> getAllEmployees();
+		public List<Employee> getAllEmployeesByFirstName();
+	}
+
+
+	public class EmployeeServiceImpl implements EmployeeService{
+		private EmployeeDAO employeeDAO; // dependency object, i.e. this object depends on the stated object.
+
+		public void EmploeeServiceImpl(EmployeeDAO employeeDAO){
+			this.employeeDAO = employeeDAO;
+		}
+
+		@Override
+		public void registerEmployee(Employee employee){
+			this.employeeDAO.registerEemployee(employee);
+		}
+
+		// etc etc...
+	}
+
+	public class EmployeeController{
+		private EmployeeServiceImp employeeServiceImpl; // dependency object
+
+		public void EmploeeServiceImpl(EmployeeDAO employeeDAO){
+			this.employeeDAO = employeeDAO;
+		}
+
+		public void registerEmployee(Employee employee){
+			this.employeeDAO.registerEemployee(employee);
+		}
+
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
