@@ -316,6 +316,12 @@ Enums
 Design Patterns
 - Strategies to create usuable solutions:
 
+- Builder pattern: 
+	- Similar to functional method calls, e.g. Stream Pipeline
+	
+- Decorator pattern:
+	- e.g. EmployeeController ctrl = new EmployeeController(new EmployeeServiceImpl(new EmployeeDAOInMemoryImpl()))
+	
 - Singleton class
 	- Used to create expensive objects, i.e. objects that contain objects that consume more resources, e.g. configuration, database connections.
 	- Steps:
@@ -420,6 +426,7 @@ Design Patterns
 - Sample application architecture:
 
 	Database/In memory <- DAO <- Service Layer <- Controller
+	
 =========
 What is a package in Java?
 - Compartmentalises a group of related class files.
@@ -505,6 +512,17 @@ What is a package in Java?
 	}
 
 
+	public static void main(String[] args){
+		
+		EmployeeController ctrl = new EmployeeController(new EmployeeServiceImpl(new EmployeeDAOInMemoryImpl()));
+	
+	    ctrl.registerEmployee(new Employee(1,"Kishore","Pashindla"));
+		ctrl.registerEmployee(new Employee(2,"Phil","Page"));
+		
+		
+		System.out.println(ctrl.getAllEmployees());
+		
+	}
 
 
 
