@@ -162,7 +162,7 @@ Eclipse IDE
 - "src/main/java" - server-side
 	- Need to install Apache Tomcat and direct Eclipse to the server directory.
 	- "request.setAttribute("logDate", var)" stores server-side variable in the response.
-	- the "request.getResquestDispatcher('newPage.jsp').forward(request,response)" methods will send the new html page to client
+	- the "request.getResquestDispatcher().forward('request,response')" methods will send the new html page to client
 - "src/main/webapp" - client-side view; static resources
 	- JSP
 		- "Scriptlet" is defined by <% %>
@@ -172,11 +172,8 @@ Eclipse IDE
 Applying OOP to web app architecture
 - Servlets act as controllers.
 - No need to write view because that is taken up by the browser frontend.
-- Sessions:
-	HttpSession session = 
 
-	and for JSP...
 
-	(Employee) session.getAttribute()
+
 
 

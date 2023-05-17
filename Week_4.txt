@@ -372,9 +372,9 @@ Design Patterns
 		}
 
 		// USE DEPENDENCY INJECTION INSTEAD:
-		public Customer(int customerId, Address address){
+		public Customer(int customerId, Address address){ 
 			this.customerId = customerId;
-			this.address = address;
+			this.address = address; // This is the dependency injection point.
 		// Dependency injection creates "loosely coupled" classes.
 		}
 	}
@@ -417,6 +417,7 @@ Design Patterns
 	- Allows us to write business logic.
 	- It might look very similar to "controller".
 	- The difference is service layer can do business logic, e.g. encryption.
+		- Java Servlet is not quite a good example. Servlets are managed by the server. There are no class dependencies between Servlets and controller/service layer classes.
 	- Controller can also decide which service out of many to choose.
 		- Also controllers are just classes; never have there been interfaces for them.
 
