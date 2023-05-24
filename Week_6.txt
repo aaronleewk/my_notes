@@ -1,0 +1,88 @@
+24/05/2023
+=========
+Build tools + Project Management Tools
+- Eliminates errors in deployment process:
+	- Compilation and creation of artifacts (e.g. executables such as .jar)
+	- Dependency versioning
+	- Run tests
+	- Organises static and dynamic files in separate places
+- Examples:
+	- Maven
+	- Gradle 
+	- Simple Build Tool (SBT - for scala)
+
+Maven Project
+- Domain concepts:
+	- Group ID (represents domain name)
+	- Artifact ID (pointer to file/project/executable name)
+	- Version (indicates the expected/ available version)
+	- The above is simplified as (GAV)
+- The build file is "pom.xml" (Project Object Model)
+	- Includes: 
+		- Configurations: Compiler version 
+		- Dependencies:  
+		- Plugins:
+- Initialisation
+	- On the 'mvnrepository' website, you can find the dependency definitions for different packages. You can copy them and paste in your pom.xml file.
+	- NOTE within 'dependency' section of 'pom.xml', there is also a 'scope' section. This determines when the dependency needs to be downloaded.
+	- Eclipse:
+		- Create new Maven project
+		- Check the 'Create simple Maven project' option (skip archetype selection)
+		- Sample project config:
+			- Group ID: com.ab
+			- Artifact ID: first-maven-project
+			- Versioning: 0.1.1 SNAPSHOT
+			- Packaging: jar
+
+Testing:
+- Unit -> Integration -> System/end-to-end -> User acceptance
+- Manual, automated, white box, black box testing
+	- White box testing: Code is visible (e.g. unit and integration tests)
+	- Black box testing: Cannot see code (done by test engineers/QA) (test functional requirements)
+		- QA testing specifically: Identifying and finding bugs and reporting them to developers to fix.
+- Unit testinng
+	- A 'unit' is scoped to method/class/object/SQL query.
+	- Characteristics:
+		- F - Fast (fine-grained testing because code gets deployed often)
+		- I - Independent
+		- R - Repeatable (the same test could be run multiple times, depending on the SD stage)
+		- S - Self-validating (either pass/fail)
+		- T - Timely
+- Unit testing
+	TDD Life Cycle
+	- RED: Start with failing test
+	- GREEN: Write code to make the test pass
+	- REFACTOR: Change code without changing functionality.
+	
+	- Add '@Test' annotation above method.
+		- This enables IDE to run the single unit test. Right click in the scope within the method and select 'Run as'
+		- Start with determining the test cases
+		- Steps: The 'triple A model'
+		
+		import static org.junit.Assert.*;
+
+		public void testAddition(){
+			// Step 1 - Arrange
+			Calculator cs = new Calculator();
+		
+			// Step 2 - Act
+			int result = cs.add(1 + 2);
+
+			// Step 3 - Assert
+			assertEquals(3, result);
+		}
+	- Best practices:
+		- DO NOT code the whole test method immediately. Write the logic incrementally.
+			- You want your test to fail for the first few times. This ensures you only add code that is necessary, instead of writing extra logic.
+			- Once the test passes, then refactoring your test logic.
+		- Writing multiple assert statements in one test can is not recommended. Keeping it to one statement isolates the exception that is raised if it fails.
+			- Guard assertion
+		- 
+=====
+Test Doubles
+- You cannot test an interface directly as it needs to be implemented.
+- So create a mock object based on the interface
+- Methodologies:
+	- Mock object: Mockito, JMock, EasyMock, PowerMock
+	- Stubs
+	- Spy

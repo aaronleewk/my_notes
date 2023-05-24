@@ -95,6 +95,13 @@ SOLID Principles
 	- The references to specific implementations result in very tight couplling. Both EmployeeService and EmployeeDAO should depend on abstractions.
 	- Every object that the class relies on, create it somewhere else and pass it to the class.
 ===============
+OOP architecture - Domain Driven Design:
+- The domain is mapped by models. They should not contain behaviour, only data (single responsibility principle).
+- OOP means combining state and behaviour, so models are the 'state', and services are the 'behaviour'.
+
+
+
+===============
 - Refactoring: Changing existing code WITHOUT changing the functionality. 
 ===============
 JDBC API (Java Database Connectivity)
