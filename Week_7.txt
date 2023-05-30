@@ -1,0 +1,192 @@
+30/05/2023
+==========
+Spring JDBC
+- What is JDBC API?
+	- It is an interface between Java application and the database.
+	- It requires a series of steps to set up; this is 'boilerplate code'!
+		- Install driver
+		- Set up driver manager 
+		- Open connection
+		- Close connection
+- Spring JDBC reduces boilerplate code:
+	- e.g. no need to manually close connection.
+- But you still need to write raw SQL. Compare to:
+
+Spring Data JPA (Java Persistence API)
+- Offers various interfaces to repositories, e.g.
+	- CrudRepository
+	- PagingAndSortingRepository
+	- JpaRepository
+- Remember, interfaces are pure abstraction
+	- So JPA is used to abstract away the persistence logic, i.e. developers do not need to write SQL queries.
+- You can focus on the higher layers instead of coding the DAO.
+- NOTE JPA must be stored in 'main/webapp/WEB-INF/views'
+
+
+Spring Setup:
+- To add dependencies in pom.xml file, select:
+	(for JDBC)
+	- mysql connector
+	- spring web
+	- spring jdbc
+	(for JSP:)
+	- tomcat embedded jasper
+	- jstl
+	(for JPA:)
+	- Spring Data JPA
+
+Spring JDBC demo:
+- 'application.properties' file is the config file Spring reads from; it contains connection properties such as username, passwords etc.
+	- This means you don't have to manually write the 'utilities.connection' class with the connection url and its try-catch blocks. 
+	- You can just declaratively state the attributes in the config file"
+	
+	==========
+		spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+		spring.datasource.url=jdbc:mysql://localhost/test
+		spring.datasource.username=root
+		spring.datasource.password=
+
+		server.port=8081
+	==========
+	public class EmployeeDAOSpringImpl implements EmployeeDAO{
+		@Autowired
+		private JdbcTemplate jdbcTemplate; // This comes with Spring JDBC
+
+		public Employee registerEmployee(Employee employee){
+			String sqlQuery = "INSERT INTO employee(x,y,z) VALUES (?,?,?)";
+
+			int i = jdbcTemplate.update(sqlQuery, new object[]{
+						employee.getEmailId(),
+						employee.getFirstName(),
+						employee.getLastName()
+					}
+
+			if(i>0) return employee;
+			else return null;
+			
+			// Notice no try-catch blocks!
+			// Also no DatabaseConnection class because of the 'applilcation.properties' file.
+		}
+
+		public List<Employee> listAllEmployee(){
+		
+			String sqlQuery = "SELECT * FROM employees";
+
+			return jdbcTemplate.queryForOjbect(sqlQuery, new MyRowMapper());
+			
+		}
+
+		public class MyRowmapper implements RowMapper<Employee>{
+			public Employee mapRow(ResultSet rs, int rowNum) throws SQL Exception{
+				return new Employee(rs.getInt(1). rs/getString(2), rs.getString(3));
+			}
+		}
+	}
+	=========
+	// To test:
+	public class SpringJDBC Demo implements commandLine{
+		public void static main(String[] args){
+			
+		}
+	}
+
+Spring JPA demo:
+========
+	// In application.properties
+	spring.mvc.view.prefix=/WEB-INF/view/
+	
+	spring.mvc.view.suffix=.jsp
+
+	spring.jpa.hibernate.ddl-auto=create // This drops then re-creates ALL tables whenever the application runs
+	spring.jpa.hibernate.ddl-auto=update // This is suggested
+	spring.jpa.show-sql=true
+
+Spring architecture:
+Servlet -> controllers -> services -> repositories (either set up automatically by JPA; or manually by JDBC) -> database
+- Spring uses DispatcherServlet; it acts as a proxy for ALL server requests. 
+- Developers are only responsible for coding up the 'controller' and the 'service' layers (their names will be different; see below).
+
+Spring MVC
+- So MVC in the Spring framework works like this:
+	- Front controller (the DispatcherServlet) is provided by Spring (this is the 'servlet' layer).
+		- It will send the client request to the appropriate controller (which has the '@GetMappping' annotation. See below:)
+	- User-defined controllers (aka backend controllers) are coded by developers. They are defined by the '@Controller' and '@RestController' annotation.
+	- View is defined by JSP or HTML with React/Angular
+	- Models are just Java classes.
+
+=======
+public class EmployeeController{
+	@GetMapping("/")
+	public String home(){
+		return "home"; // This string represents the 'view'
+	}
+	@GetMapping("/register")
+	public String register(){
+		return "register"; 
+	}
+
+	@PostMapping("/register")
+	public String registerProcess(@RequestParam("employeeEmail") int emailId, @Requestparam("firstName") String firstName, @RequestParam("lastName") String lastName){
+		return "home"; 
+	}
+	// For more efficient code:
+	@PostMapping("/register")
+	public String registerProcess(@ModelAttribute Employee employee){ // The HTML attribute names MUST match the class attribute names; also the class MUST contain setter methods for each attribute
+		Employee registerEmployee = employeeService.registerEmployee(employee);
+		if(registerEmployee != null) return "home"; 
+		else return "register";
+	}
+
+	@GetMapping("test")
+	public ModelAndView test(){ 
+		ModelAndView mv = new ModelAndView();
+
+		mv.addObject("customerList"
+
+		mv.setViewName("register");
+	}
+}
+
+======
+// Entities are ORM objects
+@Entity
+//@Table(name="customer_details" for custom table name that is not class name)
+public class Customer{
+	@Id
+	@GeneratedValue // For autogenerated primary keys
+	private int customerId; // Every entity class MUST contain primary key column
+
+	private String customerEmail;
+
+	private String customerFirstName;
+
+	public Customer(int customerId, String customerEmail, String customerFirstName){
+
+	}
+	public void setEmail(){
+
+	} 
+
+}
+
+=====
+
+public class CustomerService{
+	@Autowired
+	private CustomerRepository customerRepository;
+
+	public registerCustomer(Customer customer){
+		return customerRepository.save(customer);
+	}
+}
+
+=====
+@Repository
+public interface CustomerRepository extends JpaRepository<Customer, Integer>{
+	// The below methods are all from JpaRepository interface
+	save
+
+	findAll
+}
+
+
