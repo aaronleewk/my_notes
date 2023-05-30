@@ -86,3 +86,196 @@ Test Doubles
 	- Mock object: Mockito, JMock, EasyMock, PowerMock
 	- Stubs
 	- Spy
+========
+
+========
+What is class dependency?
+- If a class has a field or member variable which is a type of another class.
+	- It is a 'has a' relationship.
+
+	class Address{
+
+	}
+
+	class Employee{
+		private Address address; // Without 'address' object, the design of the 'Employee' class would be incomplete
+	}
+
+- Dependency injection: The process of supplying an object into another class. Types:
+	- Field injection: Entry point is at variable level
+	- Constructor injection: Entry point is at constructor level
+	- Setter injection: Entry point is at setter level
+
+	class Employee{
+		@Inject // Dependency injection annotation for the benefit of frameworks
+		private Address address; 
+
+		public Employee(Address address){ // Constructor injection
+
+		}
+
+		public void setAddress(Address address){ // Setter injection
+
+		}
+	}
+
+Spring Framework 
+- Used for supporting dependency injections. It is a DI or IoC (inversion of control) tool.
+	- Spring framework acts like "factory" pattern in providing objects to your code - it takes over control of your application. 
+- It can create, maintain object lifecycle, kill objects. The developer does not have to set up or configure the infrastructure and can focus on application logic.
+- Spring modules:
+	- Spring Core 
+	- Spring Beans
+	- Spring Context
+	- Spring JDBC
+	- Spring Data JPA (Java Persistence API)
+	- Spring AOP (Aspect Oriented Programming)
+	- Spring Security
+	- Spring Cloud
+- Spring Core: The foundation of all other Spring modules - everything is pre-configured, developers do not interact with this module.
+- Spring Beans:
+	- Bean is an object/component similar to Java model classes.
+	- They are maintained by Spring.
+- Spring Context: 
+	- Provides a set of interfaces and classes which are used to access Spring Beans.
+
+What is Spring Boot?
+- It is an extended version of Spring framework. 
+- It is for 'better bootstrap'.
+- Additional features to Spring framework:
+	- Bootstraping: Enables auto-configuration
+	- Provides embedded server for web applications. (Default is a TomCat server) 
+
+Configuring Eclipse for Spring Boot:
+- Plugin needs to be installed via 'marketplace'. Search in 'Find' section for 'Spring Tools 4'.
+- Select 'file', 'new projet', search for 'Spring'. Use 'Spring Starter Project'.
+- The next page will show 'https://www.start.spring.io' - that is the 'Spring initialiser'. Eclipse will download a zip file from that website for spring settings. The sections below are for maven configs.
+
+
+
+What is Spring Configuration?
+- Instructs Spring to create objects from Bean/model/domain classes.
+- Types:
+	- XML based: 
+		- XML for for storing and transferring data.
+		- HTML is for rendering content. 
+	- Annotation based (aka Java based)
+
+Project example:
+- Put all your models in a package conveniently titled 'com.ab.beans'.
+	- But these classes are just plain java objects for now; see next point for Beans.
+- Create a 'com.ab.configs' package to contain your spring configs.
+	- Each spring config class MUST contain '@Configuration' annotation.
+	- When you create an object WITHIN a spring config class, they are managed by the spring framework.
+
+@Configuration
+public class SpringConfig{	
+	@Bean
+	public Employee e1(){
+		Employee e1 = new Employee(1,"Alex");
+		return e1;
+	}
+	
+	public Address address1(){
+		return new Address("East London","Haggerston");
+	}
+}
+
+- In order to use spring config and its bean definitions, we also have to create an application context in your 'main' class:
+
+	public static void main(String[] args){
+		SpringApplicationrun(SpringDemo1Application.class, args);
+
+		//Step 1: Create an application context
+		ApplicationContext context = new AnnotationConfigApplicationContext(Springconfig.class,Springconfig2.class); // 'Springconfig.class' is the 'SpringConfig' class in the previous bullet point! You can add more than one config class.
+
+		//Step 2: Request the required objects/beans
+		Employee e1 = (Employee) context.getBean("e1");
+		
+		e1.setName("Alex");
+
+		Address adr1 = (Address) context.getBean("address1");
+
+		Employee e2 =  (Employee) context.getBean("e1"); 
+
+		e2.setName("Tom"); // This will not be 'Tom' - by default Spring creates singleton objects. Need to create 'prototype' scope instead.
+
+		// If you add '@Scope("prototype") to the 'SpringConfig.e1' method
+		// @Bean
+		// @Scope("prototype");
+		// public Employee e1(){
+		Employee e3 =  (Employee) context.getBean("e1");
+	}
+
+Types of Spring Bean Scopes:
+- Singleton: One object per application session
+- Prototype: New object created per 'getBean()' request
+- Request: Web-related
+- Session: Web-related
+- Global-session: Web-related
+
+Dependency Injection:
+public class Employee{
+	
+	@Autowired // Field level DI; no need to write setter method, Spring injects matching object automatically. What if in springconfig contains two Beans of the same type? See below
+	private Address address;
+
+	public void Employee(){
+	}
+}
+
+- IF there are more than one bean in the same springconfig file, to avoid error, you can use '@Primary' annotation.
+
+	@Bean
+	@Primary
+	public Address addr1(){};
+
+	@Bean
+	public Address addr2(){}
+
+	- Or you could use '@Qualifier' annotation in the field
+public class Employee{
+	
+	@Autowired 
+	@Qualifier("addr2")
+	private Address address;
+
+	public void Employee(){
+	}
+}
+
+- How about lists of objects?
+
+public class Employee{
+	
+	@Autowired 
+	private List<Address> address;
+
+	public void Employee(){
+	}
+}
+
+	- If you have multiple beans of the same type, Spring would inject all objects.
+	- What if you want some, not all, objects of 'Address' type?
+	- You would define the list as bean, AND use a qualifier in the dependency-side to refer to the specific 'list' bean:
+
+	// The springconfig class:
+	@Bean
+	public List<Address> addressList(){
+		
+	}
+
+	// The class with dependency:
+	@Autowired
+	@Qualifier("addressList")
+
+
+
+How does Spring work?
+	- Client (in this case the Java program), sends a request to Spring framework via 'context.getBean'. 
+	- Spring finds the object and supplies it back to the client.
+	- Sort of like a factory!
+
+- When right-clicking on the project, select 'Run as Spring Boot Project'!!
+
+
