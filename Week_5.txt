@@ -186,4 +186,30 @@ Applying OOP to web app architecture
 
 	(Employee) session.getAttribute()
 
+========
+Session Managemnt/Tracking
+- What is "http" protocol?
+	- Stateless protocol: Server discards client-specific information once response is sent.
+- Session tracking: Server retains client information, e.g. remembering basket information.
+	- Types of session management:
+		- Cookies: Plain text containing user information, e.g. IP address, user password. (Stored in client side!)
+			- "Cookie" is a predefined class in Java:
+				Cookie c1 = new Cookie("userName", "Aaron")
+				response.addCookie(c1); 
+				Cookie[] cookies = request.getCookies(); // Receives an array of cookies
+		- Session object: Created and maintained in server-side. 
+			- The session ID and associated data could be stored in database; usually encrypted.
+				- Session hijacking: Impersonating another user via accessing their session ID. 
+			- Example:
+				// Servlet 1
+				HttpSession session = request.getSession(true);
+				session.setAttribute("username","Aaron"); // "username" is called "session label"
+
+				// Servlet 2
+				HttpSession session = request.getSession(true);
+				String username = (String) session.getAttribute("username","Aaron"); // Return type is object so need to typecast it.
+
+		- URL rewriting
+		- Hidden fields: Not visible in webpage, but their values can be sent to the server. 	
+	- NOTE: Each browser is a client. So session is linked with specific browser, i.e. if Chrome pings a server, the data there is not reflected if Edge pings the same server.
 
