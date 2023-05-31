@@ -65,7 +65,7 @@ Spring JDBC demo:
 			else return null;
 			
 			// Notice no try-catch blocks!
-			// Also no DatabaseConnection class because of the 'applilcation.properties' file.
+			// Also no DatabaseConnection class because of the 'application.properties' file.
 		}
 
 		public List<Employee> listAllEmployee(){
@@ -98,7 +98,7 @@ Spring JPA demo:
 	spring.mvc.view.suffix=.jsp
 
 	spring.jpa.hibernate.ddl-auto=create // This drops then re-creates ALL tables whenever the application runs
-	spring.jpa.hibernate.ddl-auto=update // This is suggested
+	spring.jpa.hibernate.ddl-auto=update // This is suggested; DDL stands for 'data definition language'
 	spring.jpa.show-sql=true
 
 Spring architecture:
@@ -115,6 +115,7 @@ Spring MVC
 	- Models are just Java classes.
 
 =======
+@Controller
 public class EmployeeController{
 	@GetMapping("/")
 	public String home(){
@@ -169,6 +170,8 @@ public class Customer{
 
 }
 
+// Bridge tables are special entities
+
 =====
 
 public class CustomerService{
@@ -181,12 +184,142 @@ public class CustomerService{
 }
 
 =====
+import com.ab.entities.Customer
+
 @Repository
-public interface CustomerRepository extends JpaRepository<Customer, Integer>{
+public interface CustomerRepository extends JpaRepository<Customer, Integer>{ // NOTE 'Integer' must be an object for JpaRepository
+
 	// The below methods are all from JpaRepository interface
+
 	save
 
 	findAll
 }
 
+======
+API Creation
+Web application vs web service:
+- Web application: The user interface; the focus is on USER CONSUMPTION. Frontend developers do this.
+- Web service: Serves data. Focus is APPLICATION CONSUMPTION, whether it is web or mobile apps. Backend developers do this.
+
+Types of web services:
+- SOAP based (Simple Object Access Protocol)
+	- 'Protocol' means you have to defined everything - the operations, style etc.
+	- Response can ONLY be sent using XML.
+- REST based (Representational State Transfer)
+	- NOT a protocol
+	- Lightweight compared to SOAP; does not enforce restrictions on the format of your response data. It can be in XML, JSON, plain text etc. 
+
+Rapid application development (RAD)
+
+HTTP 
+- Response codes: https://www.restapitutorial.com/httpstatuscodes.html
+-
+=======
+Example REST API
+
+@RestController
+public class ProductController{
+
+	@Autowired
+	private ProductService productService;
+
+	// RESTful mapping methods, so just data, no JSP
+
+	@GetMapping("/products")
+	public ResponseEntity<<List<Product>> listProducts(){
+		return productService.listProducts();
+	}
+
+	@GetMapping("/products/{id}") // '{id}' is a path variable
+	public Optional<Product> listProductById(@PathVariable("id") int productId){
+		return productService.listProductByid(productId);
+	}
+
+	@PostMapping("/product")
+	public ResponseEntity<Product> addNewProduct(@RequestBody Product product){ // automatic deserialization of the inbound HttpRequest body onto a Java object
+	// Also best practice is not to return Java object, in this case 'Product', but to wrap it in a 'ResponseEntity' which represents the whole HTTP response: status code, headers, and body.
+		return new ResponseEntity<Product>(productService.addProduct(product), HttpStatus.created);
+	}
+
+} 
+
+@Service
+public class ProductService{
+	
+
+	public List<Product> listProducts(){
+
+	}
+
+	public Optional<Product> listProductById(int productId){
+
+	}
+
+	public int deleteProductById(int productId){
+		productRepository.deleteById(productid);
+		return 1;
+	}
+
+}
+
+@Repository
+public class ProductRepository extends JpaRepository<Product,Integer>{
+	@Query("UPDATE Product SET productTitle = :pTitle WHERE productId = :id") // MUST use JPQL (Java Persistence Query Language) 
+	public int updateProductById(@Param("pTitle") String productTitle, @Param("id") int productId){
+
+	}
+
+	@Query("SELECT p.* FROM Product p WHERE productPrice = :price")
+	public List<Product> listProductsByPrice(@Param("price") int price){
+
+	}
+
+	@Modifying
+	@Transactional
+	@Query("UPDATE Product p SET p.productTitle = :pTitle WHERE p.productId = :id)
+}
+
+@MappedSuperclass // Will not create table for superclass; superclass is only there to supply common fields.
+public class ElectornicDevice{
+	@Id
+	private string id;
+}
+
+@Entity
+public class MobilePhone extends ElectronicDevice{
+
+	private String model;
+
+	@ManyToOne
+	@JoinColumn(name="owner_id")
+	private int ownerId;
+}
+
+@Entity
+public class Owner {
+	@Id
+	private int ownerId;
+
+	@OneToMany(mappedBy = "ownerId")
+	private List<MobilePhone> phones;
+
+	@Embedded
+	private Address address;
+
+}
+
+@Embeddable // Spring JPA will not create a separate table for this class. Instead this entity can be injected into other entities.
+public class address{
+
+}
+
+@Entity
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+public class Vehicle{
+	@Id
+	private int vehicleId;
+
+	private String vehicleName;
+}
 
