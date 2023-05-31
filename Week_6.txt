@@ -1,5 +1,15 @@
 24/05/2023
 =========
+- Eclipse initialisation:
+	- Create new Maven project
+	- Check the 'Create a simple project' option (skip archetype selection)
+	- Sample project config:
+		- Group ID: com.ab
+		- Artifact ID: first-maven-project
+		- Versioning: 0.1.1 SNAPSHOT
+		- Packaging: jar
+
+Background:
 Build tools + Project Management Tools
 - Eliminates errors in deployment process:
 	- Compilation and creation of artifacts (e.g. executables such as .jar)
@@ -8,13 +18,18 @@ Build tools + Project Management Tools
 	- Organises static and dynamic files in separate places
 - Examples:
 	- Maven
-	- Gradle 
+	- Gradle
 	- Simple Build Tool (SBT - for scala)
 
 Maven Project
+- Maven vs Maven project: Each 'Maven project' has its own POM file. We can configure 'Maven' build tool to build multiple projects.
+	- A multi-project repository contains a POM file in the root directory. The individual projects are listed in a modules section.
 - Domain concepts:
+	- Artifact: The output generated after a Maven project build. This element can be integrated into another project, e.g. war file.
+	- Coordinate: The groupId, artifactId, and version of a given artifact.
+- Coordinate setup - GAV:
 	- Group ID (represents domain name)
-	- Artifact ID (pointer to file/project/executable name)
+	- Artifact ID: Pointer to file/project/executable; within the group, it identifies a project.
 	- Version (indicates the expected/ available version)
 	- The above is simplified as (GAV)
 - The build file is "pom.xml" (Project Object Model)
@@ -22,17 +37,24 @@ Maven Project
 		- Configurations: Compiler version 
 		- Dependencies:  
 		- Plugins:
-- Initialisation
+- Dependencies
 	- On the 'mvnrepository' website, you can find the dependency definitions for different packages. You can copy them and paste in your pom.xml file.
-	- NOTE within 'dependency' section of 'pom.xml', there is also a 'scope' section. This determines when the dependency needs to be downloaded.
-	- Eclipse:
-		- Create new Maven project
-		- Check the 'Create simple Maven project' option (skip archetype selection)
-		- Sample project config:
-			- Group ID: com.ab
-			- Artifact ID: first-maven-project
-			- Versioning: 0.1.1 SNAPSHOT
-			- Packaging: jar
+
+	<dependencies>
+		...
+		<dependency>
+			<groupId>com.stackoverflow...</groupId>
+			<artifactId>artifactId...</artifactId>
+			<version>1.0</version>
+		</dependency>
+		...
+	</dependencies>
+
+	- NOTE within 'dependency' section of 'pom.xml', there is also a 'scope' section. This is for  transitive dependencies.
+		- They are the dependencies of your project's direct dependencies.
+		- Dependency scopes can help to limit the transitivity of your dependencies. 
+		- They determine when the dependency needs to be downloaded: compile-time, runtime, testing
+
 
 Testing:
 - Unit -> Integration -> System/end-to-end -> User acceptance
