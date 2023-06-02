@@ -82,6 +82,8 @@ SOLID Principles
 
 - Dependecy Inversion Rule
 	- See: https://www.codemag.com/article/0705071/Layered-Architecture-Dependency-Injection-and-Dependency-Inversion
+	- NOTE: Inversion arises from an application of OCP and the Liskov Substitution Principle
+		- But consier the Observer Pattern, which complies with OCP but not Inversion.
 	- A dependency is any other object type which a class has a direct relationship with. The class is described as being coupled to that other type.
 		<<<<< Example time >>>>>>
 		- Consider the Single Responsibility Rule above for "objects" - look at the below code:
@@ -168,7 +170,7 @@ SOLID Principles
 			    )
 		    );
 		    
-		var vm = new PrécisViewModel(repository);
+		var vm = new ViewModel(repository);
 							
 		<<<<< Example end >>>>>>		
 
@@ -179,6 +181,17 @@ SOLID Principles
 	Summary of the Inversion principle:
 	- High level modules should not depend on low level modules. 
 	- Abstractions should not depend on details. Details should depend on abstractions (ie an interface).
+		- OR: program to an interface! (See: https://www.baeldung.com/cs/program-to-interface)
+			- Originally: drive -> car & drive -> truck;
+			- Then abstraction: drive -> vehicle (car extends; truck extends)
+			- THEN interface: use Multiple Abstractions (satisfies SRP too) (drive -> drivable + breakable; drivable (car extends); breakable (car + wall extends))
+			- The explanation:			
+			- First, we directly used the implementing classes from other classes. Usually, we call this method “programming to classes” or “programming to implementations”. It makes the code tightly coupled because there’ll be many dependencies between different classes. This makes the code fragile because when we modify one part of the code, it tends to break things in many unexpected places.
+			- Next, we introduced an abstract class "vehicle", which decoupled our classes’ clients from the concrete implementations. We call this technique “programming to abstraction”. But we were still mixing different aspects of the functionality in the same abstraction (SRP!)
+			- So we introduce multiple abstractions: interfaces. We call this method “programming to interfaces”. 
+				- Note that an interface is also an abstraction. Therefore, this method is the subset of programming to abstractions.
+			- With interfaces, on top of decoupling implementations, we were able to decouple multiple concepts.
+			- In a nutshell, when we’re programming to interfaces, different business logic are not connected through implementations. They’re connected through interfaces.
 		
 	- Consider the below:
 
