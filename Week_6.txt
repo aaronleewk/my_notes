@@ -68,7 +68,7 @@ Testing:
 		- F - Fast (fine-grained testing because code gets deployed often)
 		- I - Independent
 		- R - Repeatable (the same test could be run multiple times, depending on the SD stage)
-		- S - Self-validating (either pass/fail)
+		- S - Self-validating (either pass/fail; Make sure there is no 3rd possibility - 'error'!)
 		- T - Timely
 - Unit testing
 	TDD Life Cycle
@@ -84,14 +84,18 @@ Testing:
 		import static org.junit.Assert.*;
 
 		public void testAddition(){
-			// Step 1 - Arrange
+			// Step 1 - Arrange: create dummy object and supply it with dummy data (empty constructor/no dummy data in this case)
 			Calculator cs = new Calculator();
+			
+			//Can also store expected value in 'arrange' section
+			int expected = 3;
 		
-			// Step 2 - Act
+			// Step 2 - Act: call the METHOD you want to test
 			int result = cs.add(1 + 2);
+			// Methods that return 'void' need to be tested another way!
 
-			// Step 3 - Assert
-			assertEquals(3, result);
+			// Step 3 - Assert: there are different options, e.g. valid input should retun notNull/equals/ArrayEquals; invalid input should return null
+			assertEquals(expected, result);
 		}
 	- Best practices:
 		- DO NOT code the whole test method immediately. Write the logic incrementally.
