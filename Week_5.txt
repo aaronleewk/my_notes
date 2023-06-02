@@ -4,7 +4,7 @@ SOLID Principles
 - The below principles all lead to each other, e.g. single responsibility can be extended to give effect to open/close, and Liskov substitution principle reminds you to write o/c relationships in a better way.
 
 - Single responsibility
-	- Specific way to design classes
+	- This is a specific way to design classes
 
 	class Employee{
 		private int employeeId;
@@ -83,12 +83,11 @@ SOLID Principles
 - Dependecy Inversion Rule
 	- See: https://www.codemag.com/article/0705071/Layered-Architecture-Dependency-Injection-and-Dependency-Inversion
 	- A dependency is any other object type which a class has a direct relationship with. The class is described as being coupled to that other type.
+		<<<<< Example time >>>>>>
 		- Consider the Single Responsibility Rule above for "objects" - look at the below code:
 			- Even though the implementation is in one "object", abstractly it is comprised of several "responsibilities", and therefore should be decomposed into several "objects": database connection; data mapping to domain objects, rendering the data, serving the data.
 			- These "objects" or "responsibilities" all depend on each other, from high level to low level:
 				PopulateGridFrom => MapFrom => GetAllEmployees()
-			- Any changes to any dependency will affect the whole chain! 
-				- To solve: use dependency injection, so the "object" that needs to rely on other "objects" should not be responsible for creating them; rather, those "responsibilities" (1) should be injected into it (2) in the form of abstractions.
 				
 		public partial class ViewTightlyCoupled : Page
 		{
@@ -142,6 +141,36 @@ SOLID Principles
 			    etc etc
 		    }
 		}
+		
+		- Any changes to how the dependency is constructed will affect the whole chain! 
+				- An "object" should not have to know how to construct its dependecy "objects". 
+				- To solve: use dependency injection, so the "object" that needs to rely on other "objects" should not be responsible for creating them; rather, those "responsibilities" (1) should be injected into it (2) in the form of abstractions.
+				- This type of loose coupling gives you better separation of concerns because it allows you to apply the Open/Closed Principle (Open for extension; closed for modification) (From: https://blog.ploeh.dk/2010/04/07/DependencyInjectionisLooseCoupling/)
+					- Consider: we want to implement caching for 'GetAllEmployees' class
+						- Without loose coupling, we would more or less be constrained to adding it to either 'GetAllEmployees' or add another method to 'ViewTightlyCoupled', but both have issues:
+							- We would be violating the Single Responsibility Principle (SRP) in both cases.
+							- If we implement caching in 'ViewTightlyCoupled', other consumers of 'GetAllEmployees' would not benefit from it.
+							- If we implement caching in 'GetAllEmployees', it wouldn't be available for any other database retrieval implementations.
+							
+						- Solution: implement a interface that extends the 'GetAllEmployees' interface to include caching. We have satisfied both the OCP and the SRP: 'GetAllEmployees' gets new functionality without modifying it. 
+						
+		IProductRepository repository =
+		    new PerformanceMeasuringProductRepository(
+			new CachingProductRepository(
+			    new SqlProductRepository(), new Cache()
+			    ),
+			new RealStopwatch()
+		    );
+		    // Compare to:
+		IProductRepository repository2 =
+		    new ProductRepository(
+			    new SqlProductRepository()
+			    )
+		    );
+		    
+		var vm = new PrécisViewModel(repository);
+							
+		<<<<< Example end >>>>>>		
 
 	- NOTE: Dependency Inversion vs Dependency Injection:
 			- Inversion is about (1) de-coupling concrete classes by preventing them from having any direct reference to each other. (2) Each class only depends upon higher-level abstractions. 
