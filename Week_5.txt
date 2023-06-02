@@ -172,7 +172,14 @@ SOLID Principles
 		    
 		var vm = new ViewModel(repository);
 							
-		<<<<< Example end >>>>>>		
+		<<<<< Example end >>>>>>	
+		
+		<<<<<< Alternative >>>>>
+		ACTUAL inversion:
+		- Instead of having one large Job class, implementing 'print' and 'fax', a Staple Job interface or a Print Job interface was created that would be used by the Staple or Print classes, respectively, calling methods of the Job class. 
+		- Therefore, one interface was created for each job, which were all implemented by the Job class.
+		
+		<<<<<< Altenative end >>>>>
 
 	- NOTE: Dependency Inversion vs Dependency Injection:
 			- Inversion is about (1) de-coupling concrete classes by preventing them from having any direct reference to each other. (2) Each class only depends upon higher-level abstractions. 
