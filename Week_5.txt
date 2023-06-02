@@ -176,8 +176,30 @@ SOLID Principles
 		
 		<<<<<< Alternative >>>>>
 		ACTUAL inversion:
-		- Instead of having one large Job class, implementing 'print' and 'fax', a Staple Job interface or a Print Job interface was created that would be used by the Staple or Print classes, respectively, calling methods of the Job class. 
-		- Therefore, one interface was created for each job, which were all implemented by the Job class.
+		
+			public class ViewEmployeesPresenterLowCohesion
+			{
+			    private IEmployeeView view;
+
+			    public ViewEmployeesPresenterLowCohesion(
+			    IEmployeeView view)
+			    {
+				this.view = view;
+				HookupEventHandlersTo(view);
+			    }
+
+			    private void HookupEventHandlersTo(
+			    IEmployeeView view)
+			    {
+			       view.Load += delegate { LoadEmployees(); };
+			    }
+			}
+		
+		Question: Wrapper class vs Inheritance vs Dependency Injection?
+		- Wrapper class is essentially 'decorator pattern'
+		- Inheritance: When you know exactly what object you want to extend.
+			- NOTE Inheritance violates encapsulation (which is a general data abstraction best-practice approach, compared to SOLID which is a OOP specific best-practice approach). In other words, a subclass depends on the implementation details of its superclass for its proper function. The superclass’s implementation may change from release to release, and if it does, the subclass may break, even though its code has not been touched. As a consequence, a subclass must evolve in tandem with its superclass, unless the superclass’s authors have designed and documented it specifically for the purpose of being extended.
+		- Dependency Injection: You know you'll be extending/using classes that meet some basic criteria, but may be more than that or defined by another developer. In that case you set your code to require a base class (or interface) and let the user of your class decide exactly which implementation to extend )see above 'IProductRepository').
 		
 		<<<<<< Altenative end >>>>>
 
