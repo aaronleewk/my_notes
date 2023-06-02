@@ -13,6 +13,9 @@ SOLID Principles
 		private int productId; //  This is irrelevant to employee object
 	}
 
+	- "Every object should have a single responsibility and therefore only a single reason to change".
+		- A component that follows this principle is "highly cohesive".
+		- So for example, a client-facing API is JUST responsible for serving the data; any database connection or mapping data to domain objects should be relegated to another object/layer.
 	- Classes should only change for ONE reason: to alterate RELEVANT characteristics to the class. 
 		- Do not add business methods to a domain class, e.g. "Payment" class should not contain "debitPayment"; that should belong to "PaymentService" class.
 		- If the class is a "View" class, it should only focus on view; if the class is a service class, it should only do that. To couple classes together, you can use the MVC pattern.
@@ -75,12 +78,79 @@ SOLID Principles
 		// Printer does not need to implement scan or fax.
 	}
 
-- Don't force developers to implement all methods.
-- Keeps code loosely coupled.
+	- Don't force developers to implement all methods. This keeps code loosely coupled.
 
 - Dependecy Inversion Rule
+	- See: https://www.codemag.com/article/0705071/Layered-Architecture-Dependency-Injection-and-Dependency-Inversion
+	- A dependency is any other object type which a class has a direct relationship with. The class is described as being coupled to that other type.
+		- Consider the Single Responsibility Rule above for "objects" - look at the below code:
+			- Even though the implementation is in one "object", abstractly it is comprised of several "responsibilities", and therefore should be decomposed into several "objects": database connection; data mapping to domain objects, rendering the data, serving the data.
+			- These "objects" or "responsibilities" all depend on each other, from high level to low level:
+				PopulateGridFrom => MapFrom => GetAllEmployees()
+			- Any changes to any dependency will affect the whole chain! 
+				- To solve: use dependency injection, so the "object" that needs to rely on other "objects" should not be responsible for creating them; rather, those "responsibilities" (1) should be injected into it (2) in the form of abstractions.
+				
+		public partial class ViewTightlyCoupled : Page
+		{
+		   private const string ConnectionString = "data 
+		   source=(local);Integrated Security=SSPI;Initital
+		   Catalog=NorthWind";
+		   private SqlConnection connection;
+
+		   protected void Page_Load(object sender, EventArgs e)
+		    {
+			if (! IsPostBack)
+			{
+			 PopulateGridFrom(MapFrom(GetAllEmployees()));
+			}
+		    }
+
+		    private void PopulateGridFrom(List&lt;Employee&gt; 
+		    employees)
+		    {
+			this.employeesRepeater.DataSource = employees;
+			this.employeesRepeater.DataBind();
+		    }
+
+		    private DataTable GetAllEmployees()
+		    {
+		      using (connection = new 
+		      SqlConnection(ConnectionString))
+			{
+			    ....
+			}
+		    }
+
+		    private List&lt;Employee&gt; MapFrom(DataTable 
+		    employeeData)
+		    {
+			...
+			foreach (DataRow employeeRow in 
+			employeeData.Rows)
+			{
+			    employees.Add(MapFrom(employeeRow));
+			}
+			return employees;
+		    }
+
+		    private Employee MapFrom(DataRow row)
+		    {
+			return
+			    new Employee(Convert.ToInt32(
+			    row["EmployeeId"]), 
+			    row["LastName"]
+			    etc etc
+		    }
+		}
+
+	- NOTE: Dependency Inversion vs Dependency Injection:
+			- Inversion is about (1) de-coupling concrete classes by preventing them from having any direct reference to each other. (2) Each class only depends upon higher-level abstractions. 
+			- Inversion is NOT about injecting dependencies; dependency injection is an implementation pattern which can help provide the level of indirection needed to avoid depending on low-level details and coupling with other concrete classes.
+		
+	Summary of the Inversion principle:
 	- High level modules should not depend on low level modules. 
-	- Abstractions should not depend on details. Details should depend on abstractions.
+	- Abstractions should not depend on details. Details should depend on abstractions (ie an interface).
+		
 	- Consider the below:
 
 	class EmployeeService{
@@ -94,11 +164,16 @@ SOLID Principles
 	
 	- The references to specific implementations result in very tight couplling. Both EmployeeService and EmployeeDAO should depend on abstractions.
 	- Every object that the class relies on, create it somewhere else and pass it to the class.
-===============
-OOP architecture - Domain Driven Design:
-- The domain is mapped by models. They should not contain behaviour, only data (single responsibility principle).
-- OOP means combining state and behaviour, so models are the 'state', and services are the 'behaviour'.
+	
+	
 
+
+===============
+Architecture - Domain Driven Design:
+- The domain is mapped by models. They should not contain behaviour, only data (single responsibility principle).
+- OOP combines state and behaviour, so models are the 'state', and services are the 'behaviour'.
+- Layered architecture: Ensures each layer can adhere to the single responsibility principle
+	- But unfortunately, people using layered architectures can still introduce an unnecessary amount of coupling between layers of their application. That's where SOLID comes in.
 
 
 ===============
