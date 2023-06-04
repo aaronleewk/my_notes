@@ -8,6 +8,7 @@
 		- Artifact ID: first-maven-project
 		- Versioning: 0.1.1 SNAPSHOT
 		- Packaging: jar
+	- To convert an existing project into a Maven project: right click, select 'Configure', select 'Convert to Maven Project'
 
 Background:
 Build tools + Project Management Tools
@@ -55,13 +56,30 @@ Maven Project
 		- Dependency scopes can help to limit the transitivity of your dependencies. 
 		- They determine when the dependency needs to be downloaded: compile-time, runtime, testing
 
-
+CI/CD:
+- Continuous integration: For each new integration into codebase, ensures all steps are followed
+	- Compile
+	- Code review/test
+	- Code install
+- Continuous deployment: Responsible for delivering artifacts to different environments
+	- QA environment, or UAT, or prod (various release stages)
+	- Allocating space in the new environment to host the artifacts is called 'provisioning'.
+- Jenkins:
+	- Produces report after each step 
+========
 Testing:
 - Unit -> Integration -> System/end-to-end -> User acceptance
+	- To move up the testing pyramid, the lower layers need to pass first, i.e. pass unit tests before proceeding to integration test.
+- Different testing lifecycle models:
+	- V model
+	- SDLC phase-by-phase 
 - Manual, automated, white box, black box testing
+	- Manual testing: Test use cases you have come up to see if they meet functional requirements; from user's point of view, NOT the developer's.
+	- Automated testing: Use of testing tools
 	- White box testing: Code is visible (e.g. unit and integration tests)
 	- Black box testing: Cannot see code (done by test engineers/QA) (test functional requirements)
 		- QA testing specifically: Identifying and finding bugs and reporting them to developers to fix.
+		
 - Unit testinng
 	- A 'unit' is scoped to method/class/object/SQL query.
 	- Characteristics:
@@ -75,13 +93,23 @@ Testing:
 	- RED: Start with failing test
 	- GREEN: Write code to make the test pass
 	- REFACTOR: Change code without changing functionality.
-	
-	- Add '@Test' annotation above method.
+
+- Setup:		
+	- Test suite class: groups all test case classes together
+		- This is because it is not good practice to include all test case methods in one test case class.
+		- e.g. for ShoppingBasketService, create separate classes for registeredUser and unregisteredUser.
+	- Testing scope:
+		- Different 'arrangements' (e.g. different dummy data supplied to constructor) 
+		- Different methods
+		- For each method, different inputs
+		- You don't need to cover all edge cases; that is QA team's job. QA will cover not just functionality, but also performance, stress test etc
+	- Add '@Test' annotation above test method.
 		- This enables IDE to run the single unit test. Right click in the scope within the method and select 'Run as'
 		- Start with determining the test cases
 		- Steps: The 'triple A model'
 		
 		import static org.junit.Assert.*;
+		import org.junit.jupiter.api.Test;
 
 		public void testAddition(){
 			// Step 1 - Arrange: create dummy object and supply it with dummy data (empty constructor/no dummy data in this case)
@@ -97,23 +125,113 @@ Testing:
 			// Step 3 - Assert: there are different options, e.g. valid input should retun notNull/equals/ArrayEquals; invalid input should return null
 			assertEquals(expected, result);
 		}
+		
+		
 	- Best practices:
 		- DO NOT code the whole test method immediately. Write the logic incrementally.
 			- You want your test to fail for the first few times. This ensures you only add code that is necessary, instead of writing extra logic.
 			- Once the test passes, then refactoring your test logic.
-		- Writing multiple assert statements in one test can is not recommended. Keeping it to one statement isolates the exception that is raised if it fails.
-			- Guard assertion
-		- 
+		
 =====
 Test Doubles
 - You cannot test an interface directly as it needs to be implemented.
-- So create a mock object based on the interface
+- So create a mock object based on the interface (objName.class)
+	- THus interfaces can be used for mocking, in addtion to enabling SOLID
 - Methodologies:
 	- Mock object: Mockito, JMock, EasyMock, PowerMock
 	- Stubs
 	- Spy
-========
 
+Test Doubles, aka dummy objects
+- Purpose: It is used to set up a proper run of the unit test code
+- Why are we not using real objects:
+	- TDD approach: test first, before you've even coded up the real objects. (do NOT use legacy approach, which is code first, test later)
+	- Also useful in cases where there is a lack of: real collaborator, real implementation, or external resource or if the external object is nondeterministic.
+	- For example: lack of internet connection, lack of production database authorisation etc.
+		- Opposite of 'integration testing': testing how modules communicate with each other, instead of the module's internal behaviour. This you NEED real collaborator.
+			- HINT: If you test class only imports testing library, it is probably a unit test instead of an integration test.
+			- What if your module integrates with another module, e.g. customer and payment details? 
+				- Test individual components first; then integrate them and test again.
+		- For unit testing, you would want to disable connections to external modules, e.g. stop service layer from connecting to DAO layer (prevents unwanted changes to database, also to remove errors from external factors such as network connection etc)
+			- If all your unit tests pass, but when you plug your app into real implementations and something fails, you have isolated the cause!
+
+Mocks and Stubs
+- Mocks are used to isolate modules for unit testing/create isolated environment.
+	- Mocks are used when actual object (i.e. an implementation of an interface) are not available, or if those objects violate the rule above (i.e. go beyond the module/layer)
+- Stubs are artificial expectations. They enable you to test an interface without an actual implementation.
+	- They go hand-in-hand with mocks.
+	- Stubs set expectations. This means when a mock object is used to call a method, what should be the return value?
+
+Example:
+- Database is 'collaborator'
+- Test: DAO layer without actual database connection
+
+@ExtendWith(MockitoExtensions.class)
+public class EmployeeDAOTest{
+	public void testRegisterEmployee(){
+		// Step 1 - Arrange
+		EmployeeDAO dao = mock(EmployeeDAO.class); // Mock object
+
+		Employee e = new Employee(1,"Tom","Lee");
+
+		// Stub object - sets expectations
+		when(dao.registerEmployee(e)).thenReturn(e);
+
+		// Step 2 - Act
+		Employee actualResult = dao.registerEmployee();
+
+		// Step 3 - Assert
+		assertNotNull(acutalResult);
+	}
+}
+
+public class EmployeeServiceTest{
+
+	@Test
+	public void testRegisterEmployee(){
+		EmployeeDAO dao = mock(EmployeeDAO.class);
+		
+		EmployeeService ser = new EmployeeService(dao);
+		//Or if no actual implementation: EmployeeService ser = mock(EmployeeService.class);
+
+		Employee e = new Employee(1,"Tom");
+
+		when(dao.registerEmployee(e)).thenReturn(e); // NOTE we are only stubbing DAO layer, not SER layer
+	
+		Employee actualResult = ser.registerEmployee(e);
+	}
+
+}
+=======
+Testing Best Practices
+- Test case methods are self-explanatory, e.g. findMaxInArray
+- Consider using Hamcrest library
+- One 'assert' per test case method
+	- Keeping it to one statement isolates the exception that is raised if it fails.
+- Write guard assertions that suit the context:
+	- They ensure certain preconditions are met.
+	- E.g. testing a method that deletes item from collection
+		- FIRST, make sure that item exists in the collection!
+		- THEN you assert if the result is true.
+			- In this case, multiple asserts are allowed because they are have the same goal.
+- Use parameterised tests where possible
+- Identify the speed of the tests
+	- Some tests run faster than others.
+	- Maven "Surefire" plugin
+		- The slower tests are run during the 'nightly build'
+- Tests must deal with raised exceptions of methods.
+
+Code coverage report:
+- You should aim to test every line of code.
+- TDD ensures you will have tested 90% of code
+- In eclipse: right click, select 'Coverage As', select 'JUnit'.
+- NOTE: DevOps team are the ones who will read this report
+- Code coverage metrics:
+	- Statement
+	- Decision
+	- Branch
+	- Condition
+	- Finite State Machine
 ========
 What is class dependency?
 - If a class has a field or member variable which is a type of another class.
