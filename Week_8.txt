@@ -1,0 +1,32 @@
+05/06/2023
+==========
+Language features:
+- Value Types vs Reference Types distinction:
+	- In C, which is a value type langauge, a variable is a place in memory, whereas a pointer refers to a place in memory, and the place it refers to can change over time. So consider:
+
+	a = 1
+	a = 2
+
+		- 'a' is a memory location that stores the value 1, then is updated to store the value 2.
+
+	- In Python, 'a' starts as a reference to an object with the value 1, then gets reassigned as a reference to an object with the value 2. 
+		- Both objects continue to coexist, even though 'a' does not refer to the first one anymore; in fact, the objects may be shared by any number of other references. 
+
+- How does this affect language features?
+	- Passing variables to functions:
+		- Function parameters are object references, passed by value. 
+
+
+
+
+	- In CPython, only strings of length 1 are interned in the pool, i.e. a='num'; b='num'; id(a)==id(b) # true
+
+- Comma operator: 
+	a = 1
+	b = 2
+
+	a , b = b , a // Swaps
+- Equality vs identity
+	- Equality checks value
+	- Identity checks memory location
+
