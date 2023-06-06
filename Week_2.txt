@@ -52,11 +52,13 @@ Datatypes
 		- long (8 bytes)
 		- double (8 bytes)
 		- boolean (virtual machine dependant)
-  - Byte (a byte is 8-bits; so the values it can represent is 2^8 bits = 256 values). The actual value range is -128 to +127.
-  - Boolean:
-  	- When a compiler translates Java source code into bytecodes, it uses ints or bytes (depending on some conditions and properties of virtual machine) to represent booleans.
-  - Char: 2 bytes - one is for ASCII; the other is for UNICODE.
+		
+  - byte (1 byte is 8 bits; 1 bit can represent 2 states; 1 byte can represent 2^8 = 256 values). The actual value range is -128 to +127.
+  - char: 2 bytes - one is for ASCII; the other is for UNICODE.
   	- Min value is '\u0000' (or 0) and a maximum value of '\uffff' (or 65,535 inclusive)
+  - boolean:
+  	- When a compiler translates Java source code into bytecodes, it uses ints or bytes (depending on some conditions and properties of virtual machine) to represent booleans.
+	
 - Object types:
 	- Java arrays MUST contain the same type, AND you must declare the array size. That is why it is called a 'static array'. To create an array with dynamic size, use 'ArrayList'. e.g.
 	
