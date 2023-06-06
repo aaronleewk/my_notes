@@ -1,12 +1,10 @@
 24/04/2023
-
+===========
 3-tier architecture: 
 - Client/browser(HTML/CSS/JS)
 - Web application server 
 - Database/Enterprise Information Systems Tier(EIS)
 (If you include cloud components, then it would be 4-tier/5-tier architecture)
-
-NOTE: Java is robust enough for enterprise applications; Python only for standalone applications.
 
 Web Servers: Apache Tomcat; Glassfish; JBoss; WebLogic 
 - Web Tier: Java Servlet; Java Server Pages (JSP);Java Server Faces (JSF); this layer is the equivalent of React.
@@ -16,14 +14,32 @@ OOP:
 - Objects are reusable, non-sequential, and maintainable.
 - Compared with procedure programming.
 
-Java:
+Java vs Python
+- Java is robust enough for enterprise applications:
+	- Better memory management (incorporates aspects of static memory allocation) (see below)
+	- Better exception handling
+		-Java has two types of exceptions: checked and unchecked. Checked exceptions HAVE to be handled. Unchecked exceptions do not and can be thrown anywhere in the code. 
+			- Python only has unchecked exceptions.
+			
+			if not 5000 < salary < 15000:
+    				raise SalaryNotInRangeError(salary)
+				
+		- Java allows a particular method to throw an error, instead of handling the error within the method. Python 'raise' does not allow that. This makes for better readability because you know what types of errors a method can throw.
+		- Notes:
+			- Python 'raise' instead of 'throw' exceptions.
+			- try-catch-finally (Java) vs try-except-finally/else (Python)
+			
+- Multithreaded
 - SECURE: All java code must be run by the JVM, which includes its own security checks.
-- Better memory management and exception handling.
+- Portable
+
+
 - Specifications:
   - Java Standard Edition (SE): aka 'Core Java'. Used for desktop/console applications.
   - Java Enterprise Edition (EE): Used for business applications. 
   - Java Mobile Edition (ME): Used for mobile applications.
 
+====================
 Datatypes
 - Primitive vs object type vs reference type
 - Primitive types:
@@ -169,87 +185,6 @@ Variables:
 
 
 
-
-
-xx3. Call Stack and Memory Heap
-- Heap and stack are generic terms for ways in which memory can be allocated. It is an implementation of a MEMORY MODEL.
-	- Memory models came into existence with high-level programming languages. Before they came along, people used assembly languages, or other means of programming which for the most part used a memory model indistinguishable from the computer's real memory. This is 'flat memory model'. See types of memory models: https://www.cs.auckland.ac.nz/~alan/courses/os/book/4.How.02.memorymod.pdf; http://canonical.org/~kragen/memory-models/; https://www.memorymanagement.org/index.html
-	- History of the use of stack-heap architecture: https://www.sigcis.org/files/A%20brief%20history.pdf
-	- Memory management in stack is done in LIFO manner whereas it’s more complex in Heap memory because it’s used globally. Heap memory is divided into Young-Generation, Old-Generation etc, more details at Java Garbage Collection.
-	- Another performance hit for the heap is that the heap, being mostly a global resource, typically has to be multi-threading safe, i.e. each allocation and deallocation needs to be - typically - synchronized with "all" other heap accesses in the program.
-
-- How are stacks and heaps related to programming languages:
-	- Heaps are bad at fast memory allocation and deallocation. If you want to grab many tiny amounts of memory for a limited duration, a heap is not your best choice. A stack, with its super-simple allocation / deallocation algorithm, naturally excels at this (even more so if it is built into the hardware)
-	- Stacks are adopted by many programming languages because they are perfect fit for scoped variables, e.g. create new stack frame at the beginning of a function, and discard it when leaving.
-		- Language implementations without a stack are typically implemented using the continuation-passing style. See: https://stackoverflow.com/questions/796211/what-does-it-really-mean-that-a-programming-language-is-stackless
-		- From a formal methods perspective the heap and stack correspond to the "Store" and "Kontinuation" of a CESK machine (Control Environment Store Kontinuation.)
-	- Local Variables that only need to last as long as the function invocation go in the stack. In most languages it's critical that we know at compile time how large a variable is if we want to store it on the stack.
-	- The heap is used for variables whose lifetime we don't really know up front but we expect them to last a while. In many languages the heap is garbage collected to remove objects that no longer have any references.
-
-- How are stacks and heaps related to OOP:
-	- Stack-and-heap is linked to the history of OOP: During the creation of ALGOL, the creators realized that an inner function can be contained within a function with a local variables, and the inner function can access the local variables of the outer function. This was implemented by moving the variables to the heap from the stack (https://youtu.be/t86v3N4OshQ?t=846).
-
-- Process:
-e.g. 
-
-public void Method1()
-{
-    int i = 4;
-    int y = 2;
-    class1 cls1 = new class1();
-}
-
-'i = 4' goes into the stack.
-'y = 2' goes into the stack; stack is LIFO, so this sits on top of 'i = 4'
-'cls1' REFERENCE goes into the stack; 'cls1' object goes into the heap.
-'}' terminates the method. Stack is emptied; 'cls1' remains in heap.
-
-
-- Each thread gets a stack, while there's typically only one heap for the application.
-	- A thread is a sequential flow of control. This sounds like processes! But...
-	- The difference: threads run in a shared memory space within ONE process;  processes run in separate memory spaces.  (See history: http://www.serpentine.com/blog/threads-faq/the-history-of-threads/)
-
- 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-==============================================
-. The reason why the stack / heap distinction is important is because of scope.
-
-struct S { ... }
-
-void f() {
-    var x = new S();
-    ...
- }
- 
-Once x goes out of scope, the object that was created is categorically gone. That is only because it is allocated on the stack, not the heap. There is nothing that could have gone in in the "..." part of the method that can change that fact. In particular, any assignments or method calls could only have made copies of the S struct, not created new references to it to enable it to keep living.
-
-class C { ... }
-
-void f() {
-     var x = new C();
-     ...
-}
-
-Totally different story! Since x is now on the heap, its object (that is, the object itself, not a copy of it) could very well continue to live on after x goes out of scope. In fact, the only way it won't continue to live is if x is the only reference to it. If assignments or method calls in the "..." part have created other references that are still "live" by the time x goes out of scope, then that object will continue living.
-
-
-
 =====
 Method overloading
 1. Two methods with the same name, but different parameters. 'Different' means two things:
@@ -382,6 +317,79 @@ Java collections framework
 	- LinkedList: Node-based collection, where each node maintains the addresses of adjacent nodes. So not good for READ, but good for ADD and REMOVE.
 	- VectorList: Synchronised objects; good for thread programming. 
 
+
+
+
+===============
+Java Memory Management
+
+- no need to allocate or deallocate memory during execution
+		- Avoids memory fragmentation, as memory blocks are contiguous and aligned.
+		- Reduces risk of memory leaks, as the memory is automatically freed when the program ends.
+		- Developer in java cannot go beyond the allocated memory. In java, when the memory is consumed beyond the allocation, it throws an error.
+		- BUT 
+			- Inflexible and wasteful, as you have to specify the maximum amount of memory you will need, regardless of the actual usage. 
+			- It also limits the scalability and modularity of your program, as you cannot dynamically create or destroy objects or arrays.
+			- May cause stack overflow.
+			
+xx3. Call Stack and Memory Heap
+- Heap and stack are generic terms for ways in which memory can be allocated. It is an implementation of a MEMORY MODEL.
+	- Memory models came into existence with high-level programming languages. Before they came along, people used assembly languages, or other means of programming which for the most part used a memory model indistinguishable from the computer's real memory. This is 'flat memory model'. See types of memory models: https://www.cs.auckland.ac.nz/~alan/courses/os/book/4.How.02.memorymod.pdf; http://canonical.org/~kragen/memory-models/; https://www.memorymanagement.org/index.html
+	- History of the use of stack-heap architecture: https://www.sigcis.org/files/A%20brief%20history.pdf
+	- Memory management in stack is done in LIFO manner whereas it’s more complex in Heap memory because it’s used globally. Heap memory is divided into Young-Generation, Old-Generation etc, more details at Java Garbage Collection.
+	- Another performance hit for the heap is that the heap, being mostly a global resource, typically has to be multi-threading safe, i.e. each allocation and deallocation needs to be - typically - synchronized with "all" other heap accesses in the program.
+
+- How are stacks and heaps related to programming languages:
+	- Heaps are bad at fast memory allocation and deallocation. If you want to grab many tiny amounts of memory for a limited duration, a heap is not your best choice. A stack, with its super-simple allocation / deallocation algorithm, naturally excels at this (even more so if it is built into the hardware)
+	- Stacks are adopted by many programming languages because they are perfect fit for scoped variables, e.g. create new stack frame at the beginning of a function, and discard it when leaving.
+		- Language implementations without a stack are typically implemented using the continuation-passing style. See: https://stackoverflow.com/questions/796211/what-does-it-really-mean-that-a-programming-language-is-stackless
+		- From a formal methods perspective the heap and stack correspond to the "Store" and "Kontinuation" of a CESK machine (Control Environment Store Kontinuation.)
+	- Local Variables that only need to last as long as the function invocation go in the stack. In most languages it's critical that we know at compile time how large a variable is if we want to store it on the stack.
+	- The heap is used for variables whose lifetime we don't really know up front but we expect them to last a while. In many languages the heap is garbage collected to remove objects that no longer have any references.
+
+- How are stacks and heaps related to OOP:
+	- Stack-and-heap is linked to the history of OOP: During the creation of ALGOL, the creators realized that an inner function can be contained within a function with a local variables, and the inner function can access the local variables of the outer function. This was implemented by moving the variables to the heap from the stack (https://youtu.be/t86v3N4OshQ?t=846).
+
+- Process:
+e.g. 
+
+public void Method1()
+{
+    int i = 4;
+    int y = 2;
+    class1 cls1 = new class1();
+}
+
+'i = 4' goes into the stack.
+'y = 2' goes into the stack; stack is LIFO, so this sits on top of 'i = 4'
+'cls1' REFERENCE goes into the stack; 'cls1' object goes into the heap.
+'}' terminates the method. Stack is emptied; 'cls1' remains in heap.
+
+
+- Each thread gets a stack, while there's typically only one heap for the application.
+	- A thread is a sequential flow of control. This sounds like processes! But...
+	- The difference: threads run in a shared memory space within ONE process;  processes run in separate memory spaces.  (See history: http://www.serpentine.com/blog/threads-faq/the-history-of-threads/)
+
+
+The reason why the stack / heap distinction is important is because of scope.
+
+struct S { ... }
+
+void f() {
+    var x = new S();
+    ...
+ }
+ 
+Once x goes out of scope, the object that was created is categorically gone. That is only because it is allocated on the stack, not the heap. There is nothing that could have gone in in the "..." part of the method that can change that fact. In particular, any assignments or method calls could only have made copies of the S struct, not created new references to it to enable it to keep living.
+
+class C { ... }
+
+void f() {
+     var x = new C();
+     ...
+}
+
+Totally different story! Since x is now on the heap, its object (that is, the object itself, not a copy of it) could very well continue to live on after x goes out of scope. In fact, the only way it won't continue to live is if x is the only reference to it. If assignments or method calls in the "..." part have created other references that are still "live" by the time x goes out of scope, then that object will continue living.
 
 
 
