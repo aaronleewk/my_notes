@@ -53,29 +53,96 @@ Datatypes
 		- double (8 bytes)
 		- boolean (virtual machine dependant)
 		
-  - byte (1 byte is 8 bits; 1 bit can represent 2 states; 1 byte can represent 2^8 = 256 values). The actual value range is -128 to +127.
-  - char: 2 bytes - one is for ASCII; the other is for UNICODE.
-  	- Min value is '\u0000' (or 0) and a maximum value of '\uffff' (or 65,535 inclusive)
-  - boolean:
-  	- When a compiler translates Java source code into bytecodes, it uses ints or bytes (depending on some conditions and properties of virtual machine) to represent booleans.
+- byte (1 byte is 8 bits; 1 bit can represent 2 states; 1 byte can represent 2^8 = 256 values). 
+	- The actual value range is -128 to +127.
+- char: 2 bytes - one is for ASCII; the other is for UNICODE.
+	- Min value is '\u0000' (or 0) and a maximum value of '\uffff' (or 65,535 inclusive)
+- boolean:
+	- When a compiler translates Java source code into bytecodes, it uses ints or bytes (depending on some conditions and properties of virtual machine) to represent booleans.
+- float vs double:
+	- When Java encounters a decimal in a program, it automatically treats it as a double. So
 	
-- Object types:
-	- Java arrays MUST contain the same type, AND you must declare the array size. That is why it is called a 'static array'. To create an array with dynamic size, use 'ArrayList'. e.g.
+		float yourBoat = 10 * 2.5; // Will throw error because 'widening conversion'. See below
+	- 3 solutions:
+		float myboat = 1.2f;  // explicit 'f' notation
+		double yourBoat = 10 * 2.5;  // change type declaration from float to double
+		float theBoat = (float) (Math.PI * 10);  // explicit type cast
+
+Conversions and promotions:
+- Identity conversions
+- Widening primitive conversions
+- Narrowing primitive conversions
+- Widening reference conversions
+- Narrowing reference conversions
+- Boxing conversions
+- Unboxing conversions
+- Unchecked conversions
+- Capture conversions
+- String conversions
+
+- Type conversion ('widening conversion'): Compiler converts lower data type into a higher data type.
+- Typecasting ('narrowing conversion'): Programmer converts higher data type into a lower data type.
+- Promotion:
+	- e.g.
+		int a = 100;
+		long b = 20;
+
+		int c = a + b; // Numeric conversion, utilising widening primitive conversion
+
+		- Java does type coercion based on the variable with maximum memory. That is why it is called 'widening conversion'.
+			- Widening conversion is only supported for primitive numberic types.
+		- In this case, the variable 'b' has the most memory at 8 bytes (because long).
+		- Therefore, the above equation will return an error because the result is a long type but the variable has only been assigned 4 bytes (int type).
+	- NOTE: Strongly typed languages do not allow for type coercion, but Java is a strongly typed language, so why is the above allowed? This is because behind the scenes, the compiler will turn implicit coercion into explicit, e.g. a + b => long(a) + b
+- Explicit converion or Type casting:
+	- Type casting can be applied to compatible data types as well as incompatible data types, whereas the compiler will only recognise implicit type coercion with compatible types.
+	- Also, the destination data type can be smaller than the source data type. That is why it is 'narrowing conversion'.
+	- 
+
+- Object vs reference types:
+	- It is basically a declared type vs run time type differemce:
 	
-	anArray = new int[10];
-	int[] myNum = {10, 20, 30, 40};
+	public class Vehicle implements Mobile {
+		public static void main(String[] args) {
+			Truck theTruck = new Truck();
+			Vehicle theVehicle = theTruck;
+			Mobile theMobile = theVehicle;
+		}
+	}
+	
+	class Truck extends Vehicle {}
+
+	interface Mobile {}
+
+	Consider: What is is the reference type and the object type of theMobile?
+	During runtime, 'theMobile' is just a 'Truck'.
+	But its declared type or 'reference type' is 'Mobile'.
+	
+	
 - Reference type are variables that refer to an object on the heap.
 	- If you assign an object to another variable, the reference is passed.
-	e.g. Book b1 = new Book();
-		 Book b2 = b1;
+	e.g. 	Book b1 = new Book();
+		Book b2 = b1;
 
 	- b1 and b2 point to the same object. 
-
+- How they affect conversions:
+	- Conversion of a primitive variable means irreversible changes in its value
+	- Casting a reference variable doesn’t affect the object it refers to. It only labels the object in another way, expanding or narrowing opportunities to work with it. 
+		- Upcasting narrows the list of methods and properties available to this object, and downcasting can extend it.
+	
+	
 Variables:
-- Local: Method-specific variables.
-	- Local variables do not get default values. Their initial values are undefined. Before you can use local variables they must be initialized.
+- Types:
+	- Static
+	- Instance
+	- Local
 - Instance: Object-specific variables.
-- Static: Bounded to the class; aka 'shared variable' across all objects of the class. Initialised at program execution time, when the class is loaded into memory (so only once).
+	- Variables have a default value of null. null references nothing.
+	- Invoking a method on a reference variable that is null will result in a java.lang.NullPointerException.
+- Local: Method-specific variables.
+	- Variables do not have a default value, not even a value of null. Always initialise local variables otherwise you will get a compile-time error.
+- Static: Bound to the class; 'shared variable' across all class objects. 
+	- Initialised at program execution time, when the class is loaded into memory (so only once).
 	- Because static members are class-level and not object-level, to access them there is no need to initialise an object of that class first; you can simply call the variable from the class. E.g.
 		
 		class A{
@@ -88,23 +155,9 @@ Variables:
 			}
 		}
 
-Java type coercion:
-- e.g.
-	int a = 100;
-	long b = 20;
 
-	int c = a + b;
 
-	- Java does type coercion based on the variable with maximum memory. That is why it is called 'widening conversion'.
-	- In this case, the variable 'b' has the most memory at 8 bytes (because long).
-	- Therefore, the above equation will return an error because the result is a long type but the variable has only been assigned 4 bytes (int type).
-- NOTE: Strongly typed languages do not allow for type coercion, but Java is a strongly typed language, so why is the above allowed? This is because behind the scenes, the compiler will turn implicit coercion into explicit, e.g. a + b => long(a) + b
-
-Java type casting:
-- NOTE: Type casting can be applied to compatible data types as well as incompatible data types, whereas the compiler will only recognise implicit type coercion with compatible types.
-- Also, the destination data type can be smaller than the source data type. That is why it is 'narrowing conversion'.
-
-Java operators:
+Operators:
 - Unary operators: e.g.
 	int a = 10;
 	int b = a++;
@@ -112,22 +165,52 @@ Java operators:
 	System.out.println(b);
 
 - In the above example, the program will return 11 then 10.
-- This is because postfix version evaluates to the origin value, while prefix version returns the new value.
+- This is because postfix returns origin value first, then evaulates the operation; prefix version evaluates the operation, then returns the new value.
 
 - Boolean operators:
 	int c = a & b;
 	- 'a' and 'b' is converted to binary, and boolean algebra is applied to them.
 
+- Short-Circuit or 'boolean' Operators: Evaluation of a logical statement concludes before all logical expressions are evaluated.
+	- && (AND - stops on first false result)	
+	- || (OR - stops on first true result)	
+	- They are in effect control structures rather than simple arithmetic operators; where side effects are important, short-circuit operators completely evaluate the first argument, including any side effects, before (optionally) processing the second argument.
+
+- Bitwise operators:
+	- &
+	- |
+	- ^
+	- Boolean operators are usually used on boolean values but bitwise operators are usually used on integer values.
+
 - Also be aware of operator precedence:
+	int a = 1;
+	int b = 3;
 	System.out.println(++a+b);
-	- Unary operator '++' will be applied first to 'a', and because it is prefix it will return the new value. Then that value is added to 'b', yielding the result 22.
+	- Unary operator '++' will be applied first to 'a', and because it is prefix it will return the new value. Then that value is added to 'b', yielding the result 5.
 
-Java control flow:
-- NOTE Java 'enhanced for' loop => 'for-each' loop over collection. However, you can only access the array values, and cannot reassign them.
-	for (type variableName : arrayName) {
-
-	}
-
+Control flow:
+	- Conditionals
+	- Iteration/loops:
+		- while
+		- do...while
+		- for
+			- NOTE Java 'enhanced for' loop => 'for-each' loop over collection. However, you can only access the array values, and cannot reassign them.
+			for (type variableName : arrayName) {}
+	- Jump/Termination
+		- break 
+		- continue
+		- return
+Arrays:
+- Java arrays MUST contain the same type, AND you must declare the array size. That is why it is called a 'static array'. To create an array with dynamic size, use 'ArrayList'. e.g.
+	
+	int[] anArray = new int[10];
+	anArray[0] = 1;
+	
+	or 
+	
+	int[] myNum = {10, 20, 30, 40};
+	
+==========
 OOP
 1. What is a class?
 - A user-defined datatype
@@ -139,7 +222,7 @@ OOP
 
 2. What is an object?
 - A combination of state and behaviours.
-- The process of creating objects from a class declaration is called INSTANTIATION.
+- INSTANTIATION: Creating objects from a class declaration.
 
 3. What is a method?
 - A block of code that can be declared once and called many times.
@@ -147,12 +230,15 @@ OOP
 	- Method definition = Worker
 	- Method call = Manager
 		- e.g. range(0,5) - this is CALL BY VALUE.
-- A 'function' is a block can exist on its own. THerefore Java does not have functions; all methods must exist within a class.
+		
+- A 'function' is a block that can exist on its own. Java does not have functions; all methods must exist within a class.
+
 - Method syntax:
 
   [access-specifier] return-type <methodName>([parameter-list]){
   
   }
+  
 - Static methods: 
 	- They can only access static variables and other static methods.
 	- Just like static variables, static methods are EXECUTED only once, when the class is loaded into memory.
@@ -335,7 +421,7 @@ Java collections framework
 
 ===============
 Java Memory Management
-
+Advantages over 
 - no need to allocate or deallocate memory during execution
 		- Avoids memory fragmentation, as memory blocks are contiguous and aligned.
 		- Reduces risk of memory leaks, as the memory is automatically freed when the program ends.
@@ -345,25 +431,22 @@ Java Memory Management
 			- It also limits the scalability and modularity of your program, as you cannot dynamically create or destroy objects or arrays.
 			- May cause stack overflow.
 			
-xx3. Call Stack and Memory Heap
+Call Stack and Memory Heap
 - Heap and stack are generic terms for ways in which memory can be allocated. It is an implementation of a MEMORY MODEL.
 	- Memory models came into existence with high-level programming languages. Before they came along, people used assembly languages, or other means of programming which for the most part used a memory model indistinguishable from the computer's real memory. This is 'flat memory model'. See types of memory models: https://www.cs.auckland.ac.nz/~alan/courses/os/book/4.How.02.memorymod.pdf; http://canonical.org/~kragen/memory-models/; https://www.memorymanagement.org/index.html
-	- History of the use of stack-heap architecture: https://www.sigcis.org/files/A%20brief%20history.pdf
+		- History of the use of stack-heap architecture: https://www.sigcis.org/files/A%20brief%20history.pdf
 	- Memory management in stack is done in LIFO manner whereas it’s more complex in Heap memory because it’s used globally. Heap memory is divided into Young-Generation, Old-Generation etc, more details at Java Garbage Collection.
 	- Another performance hit for the heap is that the heap, being mostly a global resource, typically has to be multi-threading safe, i.e. each allocation and deallocation needs to be - typically - synchronized with "all" other heap accesses in the program.
 
 - How are stacks and heaps related to programming languages:
-	- Heaps are bad at fast memory allocation and deallocation. If you want to grab many tiny amounts of memory for a limited duration, a heap is not your best choice. A stack, with its super-simple allocation / deallocation algorithm, naturally excels at this (even more so if it is built into the hardware)
+	- Heaps are bad at fast memory allocation and de-allocation. If you want to grab many tiny amounts of memory for a limited duration, a heap is not your best choice. A stack, with its super-simple allocation / deallocation algorithm, naturally excels at this (even more so if it is built into the hardware)
 	- Stacks are adopted by many programming languages because they are perfect fit for scoped variables, e.g. create new stack frame at the beginning of a function, and discard it when leaving.
 		- Language implementations without a stack are typically implemented using the continuation-passing style. See: https://stackoverflow.com/questions/796211/what-does-it-really-mean-that-a-programming-language-is-stackless
 		- From a formal methods perspective the heap and stack correspond to the "Store" and "Kontinuation" of a CESK machine (Control Environment Store Kontinuation.)
-	- Local Variables that only need to last as long as the function invocation go in the stack. In most languages it's critical that we know at compile time how large a variable is if we want to store it on the stack.
-	- The heap is used for variables whose lifetime we don't really know up front but we expect them to last a while. In many languages the heap is garbage collected to remove objects that no longer have any references.
+	- It's critical to know at compile time how large a variable is if we want to store it on the stack.
+		-  For Java, if variable is of primitive type, the actual value will be on the stack; for objects, a reference to the object in the heap will be on the stack.
+	- The heap is garbage collected to remove objects that no longer have any references.
 
-- How are stacks and heaps related to OOP:
-	- Stack-and-heap is linked to the history of OOP: During the creation of ALGOL, the creators realized that an inner function can be contained within a function with a local variables, and the inner function can access the local variables of the outer function. This was implemented by moving the variables to the heap from the stack (https://youtu.be/t86v3N4OshQ?t=846).
-
-- Process:
 e.g. 
 
 public void Method1()
@@ -403,6 +486,11 @@ void f() {
 }
 
 Totally different story! Since x is now on the heap, its object (that is, the object itself, not a copy of it) could very well continue to live on after x goes out of scope. In fact, the only way it won't continue to live is if x is the only reference to it. If assignments or method calls in the "..." part have created other references that are still "live" by the time x goes out of scope, then that object will continue living.
+
+
+- How are stacks and heaps related to OOP:
+	- Stack-and-heap is linked to the history of OOP: During the creation of ALGOL, the creators realized that an inner function can be contained within a function with a local variables, and the inner function can access the local variables of the outer function. This was implemented by moving the variables to the heap from the stack (https://youtu.be/t86v3N4OshQ?t=846).
+
 
 
 
