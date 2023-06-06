@@ -1,39 +1,5 @@
-24/04/2023
+Java
 ===========
-3-tier architecture: 
-- Client/browser(HTML/CSS/JS)
-- Web application server 
-- Database/Enterprise Information Systems Tier(EIS)
-(If you include cloud components, then it would be 4-tier/5-tier architecture)
-
-Web Servers: Apache Tomcat; Glassfish; JBoss; WebLogic 
-- Web Tier: Java Servlet; Java Server Pages (JSP);Java Server Faces (JSF); this layer is the equivalent of React.
-- Business Tier: EJB; SpringBoot; this layer applies business logic to data collected by the Web Tier.
-
-OOP:
-- Objects are reusable, non-sequential, and maintainable.
-- Compared with procedure programming.
-
-Java vs Python
-- Java is robust enough for enterprise applications:
-	- Better memory management (incorporates aspects of static memory allocation) (see below)
-	- Better exception handling
-		-Java has two types of exceptions: checked and unchecked. Checked exceptions HAVE to be handled. Unchecked exceptions do not and can be thrown anywhere in the code. 
-			- Python only has unchecked exceptions.
-			
-			if not 5000 < salary < 15000:
-    				raise SalaryNotInRangeError(salary)
-				
-		- Java allows a particular method to throw an error, instead of handling the error within the method. Python 'raise' does not allow that. This makes for better readability because you know what types of errors a method can throw.
-		- Notes:
-			- Python 'raise' instead of 'throw' exceptions.
-			- try-catch-finally (Java) vs try-except-finally/else (Python)
-			
-- Multithreaded
-- SECURE: All java code must be run by the JVM, which includes its own security checks.
-- Portable
-
-
 - Specifications:
   - Java Standard Edition (SE): aka 'Core Java'. Used for desktop/console applications.
   - Java Enterprise Edition (EE): Used for business applications. 
@@ -97,7 +63,6 @@ Conversions and promotions:
 - Explicit converion or Type casting:
 	- Type casting can be applied to compatible data types as well as incompatible data types, whereas the compiler will only recognise implicit type coercion with compatible types.
 	- Also, the destination data type can be smaller than the source data type. That is why it is 'narrowing conversion'.
-	- 
 
 - Object vs reference types:
 	- It is basically a declared type vs run time type differemce:
@@ -115,16 +80,18 @@ Conversions and promotions:
 	interface Mobile {}
 
 	Consider: What is is the reference type and the object type of theMobile?
-	During runtime, 'theMobile' is just a 'Truck'.
-	But its declared type or 'reference type' is 'Mobile'.
-	
+	- During runtime, 'theMobile' is just a 'Truck'.
+	- But its declared type or 'reference type' is 'Mobile'.
 	
 - Reference type are variables that refer to an object on the heap.
+	- They hide the machine representation of data.
 	- If you assign an object to another variable, the reference is passed.
-	e.g. 	Book b1 = new Book();
-		Book b2 = b1;
+
+	e.g.	Book b1 = new Book();
+			Book b2 = b1;
 
 	- b1 and b2 point to the same object. 
+
 - How they affect conversions:
 	- Conversion of a primitive variable means irreversible changes in its value
 	- Casting a reference variable doesn’t affect the object it refers to. It only labels the object in another way, expanding or narrowing opportunities to work with it. 
@@ -136,6 +103,7 @@ Variables:
 	- Static
 	- Instance
 	- Local
+- Local variables get highest priority (e.g. when instance and local variable both have the same name - see: shadowing)
 - Instance: Object-specific variables.
 	- Variables have a default value of null. null references nothing.
 	- Invoking a method on a reference variable that is null will result in a java.lang.NullPointerException.
@@ -200,6 +168,7 @@ Control flow:
 		- break 
 		- continue
 		- return
+
 Arrays:
 - Java arrays MUST contain the same type, AND you must declare the array size. That is why it is called a 'static array'. To create an array with dynamic size, use 'ArrayList'. e.g.
 	
@@ -211,7 +180,17 @@ Arrays:
 	int[] myNum = {10, 20, 30, 40};
 	
 ==========
-OOP
+Object Oriented Programming
+- What is OOP?
+	- As compared to object-based programming: A language is considered object-oriented if it is object-based and also has the capability of 
+		- polymorphism
+		- inheritance
+		- encapsulation
+		- composition
+	- Where a program is formed of multiple objects interacting with each other. Each interacting object has a relation. This relationship can be categorized as -
+		- Association
+		- Aggregation 
+		- Composition
 1. What is a class?
 - A user-defined datatype
 - Syntax:
@@ -274,15 +253,6 @@ Inner Class
 		- It is called IMMEDIATELY upon creation of an object.
 		- Lacks return type. This means DO NOT declare 'void'; ie it does not follow method syntax. While void doesn't return a value in the strictest sense of the word, it is still considered a return type.
 	- Constructor method is responsible for creating an object from a class template. So if you do not define a constructor in your class, the compiler will add one for you. 
-	
-
-
-Variables:
-- Global, local, instance variables (declared using 'this.')
-- Local variables get highest priority
-
-
-
 
 =====
 Method overloading
@@ -339,8 +309,8 @@ Inheritance:
 NOTE polymorphism is to do with CONCRETE classes; abstraction is to do with ABSTRACT classes and interfaces. 
 - 
 - Thus the idea of "design by contract" is to do with "abstraction", not "polymorphism".
-
 	- NOTE this is different from "class dependency" - see week 4.
+
 Abstraction in OOP
 - Abstract class: The process of creating a GENERALISED class with properties and methods common to its subclasses, e.g. 'Animal' class is an abstraction of 'Mammal', 'Reptile' classes etc. 
 - Abstract class can contain default method implementation. Otherwise it will have to declare abstract methods (see below).
@@ -356,7 +326,6 @@ Annotations
 	- Information for the compiler
 	- Compile-time and deployment-time processing: Software tools can process annotation information to generate code, XML files, and so forth.
 	- Runtime processing: Some annotations are available to be examined at runtime.
-
 
 - '@' symbol, aka 'Decorators' in Python.
 - The 'Override' annotation is just a comment - the compiler does not care if you have '@Override' or not. But it is good practice!
@@ -403,18 +372,6 @@ What is the point of an interface?
 BEST PRACTICE: Do not include business logic methods in class; include them in an interface and leave it to the subclass to implement it.
 - 'Interface segregation' is the 'I' in SOLID principles.
 
-=======
-Java collections framework
-- Allows for an object that represents a group of objects, NOT primitive types (that would just be a normal array).
-- Provides a set of interfaces such as:
-	- List: Index-based collection; duplicates allowed.
-	- Set: Hash-based indexing; duplicates not allowed.
-	- Map: Key-value pairs (aka Python dictionary)
-- Also contains implementations of the above interfaces:
-- List interface:
-	- ArrayList: Best suited for READ opertaions, not good for ADD or REMOVE.
-	- LinkedList: Node-based collection, where each node maintains the addresses of adjacent nodes. So not good for READ, but good for ADD and REMOVE.
-	- VectorList: Synchronised objects; good for thread programming. 
 
 
 

@@ -1,57 +1,5 @@
-17/04/2023
-Waterfall vs Agile
-- Goal is to shrink the development cycle. Security, testing etc is done at EVERY stage, no silo or linear progression.
-- Agile involves the client/user at every stage to get quick feedback and clarify expectations. Embrace change and flexibility; incremental/iterative approach; it is an on-going process and launch your current work live and get user feedback (CICD).
-- Consider the advantages and disadvantages of agile too: 
-- Advantages: quick feedback/quick fix; good collaboration/good outcome; 
-- disadvatnages: there is an extra cost to the company in implementing agile - increased time invested in getting cross-functional alignment; not everyone is comfortable to these new practices, e.g. compulsory standups, learning and configuring new CICD tools; people need to be trained; writing tests increases lag in delivery. 
-- !!!Devops brings people together!!! (and that cannot be replaced by AI). Previously, in waterfall, there is a strict division between developers and operations silos; the former hands off to the latter. Now, developers and operations have to work together; representatives from different functions are all present in standup and all have a say in the process, e.g. if dev wants to use a new package, QA have to agree to that too.
-- waterfall development goes in linear stages: requirements-setting is done, then development begins. It is suitable for: requirements are clear and won't change; time constrained projects
-
-Examples of Agile implementations:
-1. scrum
-2. kanban
-
-________________________
-SDLC roles:
-Business Analyst (account managers are responsible for looking for them):
-- Requirements gathering (mobile payment) + specification (use Apple  Pay and Visa)
-- Planning/design of solution
-- Technical BA is a thing
-- Product owner is similar to BA; but they are responsible for one product only. Also it's more front-facing, where you'll talk to the client more.
-
-QA/Testing:
-- Two aspects: QA and User Acceptance testing (UAT). They have different objectives.
-- QA tests the code.
-- UAT ensures that users get the product they want.
-
-
-DevOps:
-1. SE develops the app; QA tests it; Devops releases the software.
-2. SE tries to make sure QA is happy.
-3. DevOps lifecycyle: CICD - Docker+Kubernetes+Jenkins; once passed, provisioning and hosting
-4. CICD: allows for early bug detection. 
-5. Once CICD passes successfully, then DevOps moves to provisioning and config management (Ansible; Terraform)
-5. Once everything is hosted, then on to UAT, e.g. security scans, automated security attacks, penetration testing, monkey testing, smoke testig, red team testing etc. Hosting on the UAT servers AGAIN requires DevOps people to provision and config. 
-- NOTE now DevSecOps is becoming a thing, and security engineers are no longer siloed to the end of the SDLC. The rise of AI makes this even more imperative (because of automation potential expanding to cover security engineering). It's all about shortening the SDLC!
--  The primary role of DevOps is to take continuous feedback on the process at every step, as it fills the gap between Development and Operation. The large amount of data generated in gathering feedback (e.g. security,
-
-Product support analysts:
-1. Checking if application is running the way its expected to; also that the plaform is still live.
-2. They work with devops.
-3. They are responsible for monitoring the app and if there is a problem, finding the root cause.
-4. When a customer creates a ticket describing a problem (level 1 contact), that gets elevated up to level 2/level 3 - the product support analyst.
-
-DevOps Tools:
-- Jira: ticketing/workflow management (integrates nicely with Trello)
-- Confluence: for documentation (integrates nicely with Jira)
-- Teams vs Slack
-- Maven vs Gradle: build tools
-- Ansible vs puppet: deployment infrastructure configuration/automation
-
-======================================================
-18/04/2023
-SQL
+Databases
+===========
 1. What is a file?
 - An abstraction; it is a container for data to be managed by the file system.
 
@@ -116,8 +64,6 @@ SQL
 
 	--- transaction  end
 
-
-
 11. Querying 
 - CRUD operations(Create, Read, update, Delete)
 - Data definition operators
@@ -159,7 +105,6 @@ SQL Constraints
 - NOT NULL
 - CHECK
 - DEFAULT
-
 
 2. Syntax
 - Defined at the end of a statement:

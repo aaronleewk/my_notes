@@ -1,4 +1,23 @@
 05/06/2023
+===============
+Java vs Python
+- Java is robust enough for enterprise applications:
+	- Better memory management (incorporates aspects of static memory allocation) (see below)
+	- Better exception handling
+		-Java has two types of exceptions: checked and unchecked. Checked exceptions HAVE to be handled. Unchecked exceptions do not and can be thrown anywhere in the code. 
+			- Python only has unchecked exceptions.
+			
+			if not 5000 < salary < 15000:
+    				raise SalaryNotInRangeError(salary)
+				
+		- Java allows a particular method to throw an error, instead of handling the error within the method. Python 'raise' does not allow that. This makes for better readability because you know what types of errors a method can throw.
+		- Notes:
+			- Python 'raise' instead of 'throw' exceptions.
+			- try-catch-finally (Java) vs try-except-finally/else (Python)
+			
+- Multithreaded
+- SECURE: All java code must be run by the JVM, which includes its own security checks.
+- Portable
 ==========
 Language features:
 - Value Types vs Reference Types distinction:

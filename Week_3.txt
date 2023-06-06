@@ -1,5 +1,18 @@
 02/05/2023 Tues
+=======
+Java collections framework
+- Allows for an object that represents a group of objects, NOT primitive types (that would just be a normal array).
+- Provides a set of interfaces such as:
+	- List: Index-based collection; duplicates allowed.
+	- Set: Hash-based indexing; duplicates not allowed.
+	- Map: Key-value pairs (aka Python dictionary)
+- Also contains implementations of the above interfaces:
+- List interface:
+	- ArrayList: Best suited for READ opertaions, not good for ADD or REMOVE.
+	- LinkedList: Node-based collection, where each node maintains the addresses of adjacent nodes. So not good for READ, but good for ADD and REMOVE.
+	- VectorList: Synchronised objects; good for thread programming. 
 ===============
+
 Recap:
 Keyword with first letter capitalised, e.g. 'Iterator', can be one of three things:
 - Annotation
