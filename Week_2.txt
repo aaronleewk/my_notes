@@ -43,9 +43,20 @@ Java vs Python
 Datatypes
 - Primitive vs object type vs reference type
 - Primitive types:
+	- 8 of them:
+		- byte (1 byte)
+		- char (2 bytes)
+		- short (2 bytes)
+		- int (4 bytes)
+		- float (4 bytes)
+		- long (8 bytes)
+		- double (8 bytes)
+		- boolean (virtual machine dependant)
   - Byte (a byte is 8-bits; so the values it can represent is 2^8 bits = 256 values). The actual value range is -128 to +127.
-  - Boolean: Size of actual boolean value depends on the operating system.
+  - Boolean:
+  	- When a compiler translates Java source code into bytecodes, it uses ints or bytes (depending on some conditions and properties of virtual machine) to represent booleans.
   - Char: 2 bytes - one is for ASCII; the other is for UNICODE.
+  	- Min value is '\u0000' (or 0) and a maximum value of '\uffff' (or 65,535 inclusive)
 - Object types:
 	- Java arrays MUST contain the same type, AND you must declare the array size. That is why it is called a 'static array'. To create an array with dynamic size, use 'ArrayList'. e.g.
 	
