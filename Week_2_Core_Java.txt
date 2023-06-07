@@ -7,7 +7,7 @@ Java
 
 ====================
 Datatypes
-- Primitive vs object type vs reference type
+- Primitive types vs reference types
 - Primitive types:
 	- 8 of them:
 		- byte (1 byte)
@@ -64,8 +64,8 @@ Conversions and promotions:
 	- Type casting can be applied to compatible data types as well as incompatible data types, whereas the compiler will only recognise implicit type coercion with compatible types.
 	- Also, the destination data type can be smaller than the source data type. That is why it is 'narrowing conversion'.
 
-- Object vs reference types:
-	- It is basically a declared type vs run time type differemce:
+- Reference types:
+	- NOTE there is a declared type vs run time type difference:
 	
 	public class Vehicle implements Mobile {
 		public static void main(String[] args) {
@@ -79,7 +79,7 @@ Conversions and promotions:
 
 	interface Mobile {}
 
-	Consider: What is is the reference type and the object type of theMobile?
+	Consider: What is is the reference type and the runtime type of theMobile?
 	- During runtime, 'theMobile' is just a 'Truck'.
 	- But its declared type or 'reference type' is 'Mobile'.
 	
@@ -122,8 +122,6 @@ Variables:
 				System.out.println(A.x);
 			}
 		}
-
-
 
 Operators:
 - Unary operators: e.g.
@@ -221,9 +219,22 @@ Object Oriented Programming
 - Static methods: 
 	- They can only access static variables and other static methods.
 	- Just like static variables, static methods are EXECUTED only once, when the class is loaded into memory.
+		- Static fields are initialized at the time of class loading in Java; instance variables are initialised when you create the instance.
 	- Static blocks always execute first before the main() method in Java because the compiler stores them in memory at the time of class loading and before the object creation.
+
+		static {
+			String category = "electronic trading system";
+			System.out.println("example of static block in java");
+		}
+		- Beware that if your static initialize block throws Exception than you may get java.lang.NoClassDefFoundError when you try to access the class which failed to load.
+
+	- The 'main' method:
+		- In Java, 'main' method does not return any value; in C, 'main' returns an int.
+
+			- NOTE: variable argument or varargs available from Java5 changes the syntax:
+				public static void main(String... args)
 		- This is why 'main' method must be static. 
-		- Therefore static methods do not have (or belong to) any instance you cannot use the "this" reference. 
+		- Therefore static methods do not have (or belong to) any instance; you cannot use the "this" reference. 
 
 4. OOP design in Java:
 Static Class
@@ -234,19 +245,15 @@ Singleton Class
 POJO Class
 Inner Class
 
+- Static classes
+	- Making a class static ensures that it can never be instantiated by generating a compiler error should the user attempt to do so. If the class, consisting of only static members, is simply not intended to be instantiated, there is no reason not to make it static. You can choose not to do so, but instances of such a class aren't going to be very useful, and users creating these instances are going to be left quite confused.
+	- On the other hand, if you intend for instances of this class to be created but you expect derived classes to implement their own instance members, chances are that this class should be abstract, rather than static (and perhaps those instance members should be stated upfront via abstract definitions or an interface).
+	- That's why we do not need to instantiate 'System' to use the 'out' method.
+
 - Model class/ POJO (plain old Java Object) class:
 	- Contains private variables and their Getters and Setters.
 		- Setters allow for mutability.
 		- Javabeans standard forces you to use getters/setters.
-
-5. OOP thinking:
-- 4 pillars of Object-oriented programming:
-	- START WITH Encapsulation (data and methods together)
-	- Inheritance
-	- Abstraction
-	- Polymorphism
-- https://www.yegor256.com/2014/09/16/getters-and-setters-are-evil.html
-
 
 - Constructor:
 		- Has the SAME NAME as the class in which it is declared.
@@ -277,39 +284,6 @@ Method overloading
 	- Don't do it. Use design pattern.
 	- Static Factory Method: "Static factory method is simply a static method that returns an instance of a class." Effective Java, Joshua Bloch
 
-2. Overloadinng is an example of 'polymorphism'
-- The '*' symbol in C/C++ can be used as a pointer, or for multiplication.
-
-Inheritance:
-- What's the point? Reusability, maintainability and reliability (base class will already be tested).
-- Inheritance represents child class "is-a" relationship between parent class, e.g. 'Dog' is-a 'Animal'.
-- Creating a new class from an existing class.
-	- The inherited class is called a 'child class'. The existing class is called a 'super/parent' class.
-		- In C++, the inherited class is called 'derived class'; the parent class is called a 'base class'.
-- Multi-level inheritance:
-	class A{};
-	class B extends A{};
-	class C extends B{};
-
-- Hierarchical inheritance:
-	class A{};
-	class B extends A{};
-	class C extends A{};
-
-- NOTE Java does not support multitple and hybrid inheritance.
-	- Multiple inheritance (C++ and Python supports this):
-		class A{};
-		class B{}; 
-		class C extends A,B{};
-	- Hybrid inheritance: Combination of multi-level and multiple inheritance.
-
-- Subclass inherits private variables of parent, BUT it cannot access it directly. It must use the parent's accessor methods.
-	- Use 'super' method to refer to parent class members, e.g. super.getVariable('Var');
-
-NOTE polymorphism is to do with CONCRETE classes; abstraction is to do with ABSTRACT classes and interfaces. 
-- 
-- Thus the idea of "design by contract" is to do with "abstraction", not "polymorphism".
-	- NOTE this is different from "class dependency" - see week 4.
 
 Abstraction in OOP
 - Abstract class: The process of creating a GENERALISED class with properties and methods common to its subclasses, e.g. 'Animal' class is an abstraction of 'Mammal', 'Reptile' classes etc. 
@@ -367,13 +341,11 @@ What is the point of an interface?
 	- Interfaces vs abstract classes:
 		- Abstract classes have no restrictions on field and method modifiers, while in an interface, all are public by default. 
 		- We can have instance and static initialization blocks in an abstract class, whereas we can never have them in the interface. 
+			- BUT Java8 allows for static methods in interface. This was for backwards compatability: if existing interfaces are extended using static methods, which are loaded during compile time, then there is no need to rewrite classes that implements the interfaces.
 		- Abstract classes may also have constructors which will get executed during the child object's instantiation.
 =========
 BEST PRACTICE: Do not include business logic methods in class; include them in an interface and leave it to the subclass to implement it.
 - 'Interface segregation' is the 'I' in SOLID principles.
-
-
-
 
 
 ===============

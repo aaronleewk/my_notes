@@ -1,5 +1,45 @@
 15/05/2023
 =============
+OOP thinking:
+- 4 pillars of Object-oriented programming:
+	- START WITH Encapsulation (data and methods together)
+	- Inheritance
+	- Abstraction
+	- Polymorphism
+- https://www.yegor256.com/2014/09/16/getters-and-setters-are-evil.html
+
+Inheritance:
+- What's the point? Reusability, maintainability and reliability (base class will already be tested).
+- Inheritance represents child class "is-a" relationship between parent class, e.g. 'Dog' is-a 'Animal'.
+- Creating a new class from an existing class.
+	- The inherited class is called a 'child class'. The existing class is called a 'super/parent' class.
+		- In C++, the inherited class is called 'derived class'; the parent class is called a 'base class'.
+- Multi-level inheritance:
+	class A{};
+	class B extends A{};
+	class C extends B{};
+
+- Hierarchical inheritance:
+	class A{};
+	class B extends A{};
+	class C extends A{};
+
+- NOTE Java does not support multitple and hybrid inheritance.
+	- Multiple inheritance (C++ and Python supports this):
+		class A{};
+		class B{}; 
+		class C extends A,B{};
+	- Hybrid inheritance: Combination of multi-level and multiple inheritance.
+
+- Subclass inherits private variables of parent, BUT it cannot access it directly. It must use the parent's accessor methods.
+	- Use 'super' method to refer to parent class members, e.g. super.getVariable('Var');
+
+NOTE polymorphism is to do with CONCRETE classes; abstraction is to do with ABSTRACT classes and interfaces. 
+- 
+- Thus the idea of "design by contract" is to do with "abstraction", not "polymorphism".
+	- NOTE this is different from "class dependency" - see week 4.
+	
+=============
 Design Patterns
 - Strategies to create usuable solutions:
 
