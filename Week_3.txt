@@ -171,7 +171,7 @@ OR
 public static void getItems(List ls){
 	if(ls instanceof ArrayList){
 
-	} else if(ls instanceof Stack{
+	} else if(ls instanceof Stack){
 
 	}
 }

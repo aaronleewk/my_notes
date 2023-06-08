@@ -49,3 +49,19 @@ Language features:
 	- Equality checks value
 	- Identity checks memory location
 
+==========
+- Tuples are preferred for heterogeneous collections (similar to C structs); lists are preferred for homogeneous collections (similar to C arrays). 
+- Floating point arithmetic in Python is handled differently than Java:
+
+difference = 1.1 - 0.9
+difference == 0.2 # returns False!
+
+- Dictionaries are ordered since Python 3.6, but that is incidental to CPython's implementation; to GUARANTEE insertion order, you should use OrdereedDict from Python Collections. THEN Python 3.7 made it a langauge feature.
+
+==========
+Functions
+- What is a function definition?
+	- 
+- Return value annotation
+	- Started in Python 3.0
+
