@@ -55,7 +55,7 @@ Spring JDBC demo:
 		public Employee registerEmployee(Employee employee){
 			String sqlQuery = "INSERT INTO employee(x,y,z) VALUES (?,?,?)";
 
-			int i = jdbcTemplate.update(sqlQuery, new object[]{
+			int i = jdbcTemplate.update(sqlQuery, new object[]){
 						employee.getEmailId(),
 						employee.getFirstName(),
 						employee.getLastName()

@@ -156,6 +156,7 @@ Test Doubles, aka dummy objects
 			- If all your unit tests pass, but when you plug your app into real implementations and something fails, you have isolated the cause!
 
 Mocks and Stubs
+- NOTE Mockito can only mock methods, not constructors. So mocking is used to test methods, not models.
 - Mocks are used to isolate modules for unit testing/create isolated environment.
 	- Mocks are used when actual object (i.e. an implementation of an interface) are not available, or if those objects violate the rule above (i.e. go beyond the module/layer)
 - Stubs are artificial expectations. They enable you to test an interface without an actual implementation.
@@ -166,7 +167,15 @@ Example:
 - Database is 'collaborator'
 - Test: DAO layer without actual database connection
 
-@ExtendWith(MockitoExtensions.class)
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+@ExtendWith(MockitoExtension.class)
 public class EmployeeDAOTest{
 	public void testRegisterEmployee(){
 		// Step 1 - Arrange
@@ -263,6 +272,7 @@ What is class dependency?
 		}
 	}
 
+====================
 Spring Framework 
 - Used for supporting dependency injections. It is a DI or IoC (inversion of control) tool.
 	- Spring framework acts like "factory" pattern in providing objects to your code - it takes over control of your application. 
@@ -291,7 +301,8 @@ What is Spring Boot?
 	- Provides embedded server for web applications. (Default is a TomCat server) 
 
 Configuring Eclipse for Spring Boot:
-- Plugin needs to be installed via 'marketplace'. Search in 'Find' section for 'Spring Tools 4'.
+- Plugin needs to be installed via 'marketplace'. Click on the 'Help' menu and select 'Eclipse Marketplace'.
+- Search in 'Find' section for 'Spring Tools 4'.
 - Select 'file', 'new projet', search for 'Spring'. Use 'Spring Starter Project'.
 - The next page will show 'https://www.start.spring.io' - that is the 'Spring initialiser'. Eclipse will download a zip file from that website for spring settings. The sections below are for maven configs.
 
@@ -312,21 +323,29 @@ Project example:
 	- Each spring config class MUST contain '@Configuration' annotation.
 	- When you create an object WITHIN a spring config class, they are managed by the spring framework.
 
-@Configuration
-public class SpringConfig{	
-	@Bean
-	public Employee e1(){
-		Employee e1 = new Employee(1,"Alex");
-		return e1;
-	}
-	
-	public Address address1(){
-		return new Address("East London","Haggerston");
-	}
-}
+			@Configuration
+			public class SpringConfig{	
+				@Bean
+				public Employee e1(){
+					Employee e1 = new Employee(1,"Alex");
+					return e1;
+				}
+				
+				public Address address1(){
+					return new Address("East London","Haggerston");
+				}
+			}
 
 - In order to use spring config and its bean definitions, we also have to create an application context in your 'main' class:
 
+	import org.springframework.boot.SpringApplication;
+	import org.springframework.boot.autoconfigure.SpringBootApplication;
+	import org.springframework.context.ApplicationContext;
+	import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+	import com.ab.configs.SpringConfig;
+
+	@SpringBootApplication
 	public static void main(String[] args){
 		SpringApplicationrun(SpringDemo1Application.class, args);
 

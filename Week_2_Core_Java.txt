@@ -317,7 +317,11 @@ What is an interface in Java?
 		
 		// List of abstract methods - all methods are public by default
 		
-		// List of PUBLIC, STATIC, FINAL variables
+		public void animalSound(); 
+  		public void run(); 
+
+		// List of variables; in an interface, variables can only be PUBLIC, STATIC, and FINAL 
+		public static final String classifier ="Mammal";
 	
 	}
 	
