@@ -370,6 +370,10 @@ SOLID Principles
 			- Originally: drive -> car & drive -> truck;
 			- Then abstraction: drive -> vehicle (car extends; truck extends)
 			- THEN interface: use Multiple Abstractions (satisfies SRP too) (drive -> drivable + breakable; drivable (car extends); breakable (car + wall extends))
+				- NOTE!!!! Notice the abstractions above are focused on 'business/practical methods', e.g. drive, break. They are NOT getters and setters; those are related to models which are just containers for data. 
+				
+					Interfaces are useful for methods that  implement business reasons (e.g. service layer or DAO layer logic), NOT getters and setters.
+
 			- The explanation:			
 			- First, we directly used the implementing classes from other classes. Usually, we call this method “programming to classes” or “programming to implementations”. It makes the code tightly coupled because there’ll be many dependencies between different classes. This makes the code fragile because when we modify one part of the code, it tends to break things in many unexpected places.
 			- Next, we introduced an abstract class "vehicle", which decoupled our classes’ clients from the concrete implementations. We call this technique “programming to abstraction”. But we were still mixing different aspects of the functionality in the same abstraction (SRP!)
@@ -398,6 +402,7 @@ SOLID Principles
 ===============
 Architecture - Domain Driven Design:
 - The domain is mapped by models. They should not contain behaviour, only data (single responsibility principle).
+	- Model classes should avoid implementing interfaces. They represent data, not methods. 
 - OOP combines state and behaviour, so models are the 'state', and services are the 'behaviour'.
 - Layered architecture: Ensures each layer can adhere to the single responsibility principle
 	- But unfortunately, people using layered architectures can still introduce an unnecessary amount of coupling between layers of their application. That's where SOLID comes in.
