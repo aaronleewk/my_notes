@@ -390,6 +390,20 @@ What is class dependency?
 
 ====================
 Spring Framework 
+
+Spring Setup:
+- To add dependencies in pom.xml file, select:
+	(for JDBC)
+	- mysql connector
+	- spring web
+	- spring jdbc
+	(for JSP:)
+	- tomcat embedded jasper
+	- jstl
+	(for JPA:)
+	- Spring Data JPA
+
+	
 - Used for supporting dependency injections. It is a DI or IoC (inversion of control) tool.
 	- Spring framework acts like "factory" pattern in providing objects to your code - it takes over control of your application. 
 - It can create, maintain object lifecycle, kill objects. The developer does not have to set up or configure the infrastructure and can focus on application logic.
@@ -463,7 +477,7 @@ Project example:
 
 	@SpringBootApplication
 	public static void main(String[] args){
-		SpringApplicationrun(SpringDemo1Application.class, args);
+		SpringApplication.run(SpringDemo1Application.class, args);
 
 		//Step 1: Create an application context
 		ApplicationContext context = new AnnotationConfigApplicationContext(Springconfig.class,Springconfig2.class); // 'Springconfig.class' is the 'SpringConfig' class in the previous bullet point! You can add more than one config class.
@@ -484,6 +498,7 @@ Project example:
 		// @Scope("prototype");
 		// public Employee e1(){
 		Employee e3 =  (Employee) context.getBean("e1");
+		}
 	}
 
 Types of Spring Bean Scopes:
