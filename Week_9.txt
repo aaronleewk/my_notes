@@ -1,0 +1,390 @@
+15/06/2023
+==========
+Multithreading
+- Improves performance of application.
+- One task -> one worker -> one thread
+	- IF task is too much for one worker, split into multiple threads!
+		- Divide and conquer!
+		- e.g. process million-line dataset.
+
+Multitasking
+- What is multitasking?
+	- Concurrency 
+- Types of multitasking:
+	- Process-based
+		- What is process? 
+			- A program under execution.
+		- Heavy-weight: 
+			- Each process requires its own dedicated area of memory.
+	- Thread-based
+		- What is a thread?
+			- A block of code that can help application to run. (See below 'TheadDemo1' example, where the error message shows the thread)
+		- Light-weight: 
+			- All threads share the same area of memory.
+
+Combining both: Process-based multitasking!!
+	- Divide the program into different tasks, and assign workers to them.
+
+Efficient utilization of resources
+- See above regarding heavy-weight vs light-weight; multitasking is about resources.
+- CPU cores:
+	- Threads can go to different CPUs.
+
+=============
+Creating threads in Java
+
+How?
+- Extending 'Thread' class (developers tend to avoid using this)
+	- This is because Java does not have multiple inheritance, so this method is restrictive.
+- Implementing 'Runnable' interface
+- Implementing 'Callable' interface
+
+Example:
+
+class ThreadDemo1{
+
+	public static void main(String[] args){
+
+		System.out.println(10/0); 
+
+		// Runtime exception raised.
+
+		// A thread called 'main' is created to run this code.
+
+		// You can see the thread in the error message: 'Exception in thread "main" 
+
+	}
+} 
+
+
+class ThreadDemo2{
+
+	public static void main(String[] args){
+
+		Thread th = Thread.currentThread();
+
+		System.out.println(th); 
+			
+		// returns: Thread[main,5,main]
+	}
+} 
+
+	- Default thread priority is '5'.
+		- Linked to 'priority queue' concept.
+		- Priority is between 1 (min) - 10 (max)
+			- e.g. mobile phone. Calls have highest priority; it will interrupt your youtube or game.
+	- Thread[main,5,main]
+		- The last item 'main' is the name of the thread group.	
+
+===========
+'Thread' class
+
+Single Thread Demo:
+
+class SingleThreadDemo{
+
+	public static void main(String[] args){
+
+		countUp();
+		countDown();
+			
+	}
+
+	public static void countUp(){
+
+		for(int i = 1; i <= 10; i++){
+		
+			System.out.println("Counting UP " + i);
+
+		}
+	}
+
+	public static void countDown(){
+
+		for(int i = 10; i >= 1; i--){
+		
+			System.out.println("Counting DOWN " + i);
+
+		}
+	}
+} 
+
+Multithreading Demo:
+
+class Thread1 extends Thread{
+
+	public void run(){
+
+		countUp();
+
+	}
+
+	public void countUp(){
+
+		for(int i = 1; i <= 10; i++){
+		
+			System.out.println("Counting UP " + i);
+
+		}
+	}
+}
+
+class Thread2 extends Thread{
+	public void run(){
+		countDown();
+	}
+
+	public void countDown(){
+
+		for(int i = 10; i >= 1; i--){
+		
+			System.out.println("Counting DOWN " + i);
+
+		}
+                      
+	}   
+}
+
+class MultiThreadDemo{
+
+	public static void main(String[] args){
+
+		THread1 t1 = bew Tread1();
+
+		Thread2 t2 = new Thread2();
+
+		t1.start(); // See below for 'start' method implication
+
+		t2.start();			
+	}
+
+}
+
+	- Output is not sequential!
+		- Sequence is dependent on the CPU (e.g. CPU is faster, then completes job quicker), the OS, or the runtime environment(e.g. one thread finished earlier).
+		- Re: how runtime environment impacts sequence - see below for thread lifecycle.
+
+==========
+'Thread' class methods:
+
+Thread lifecycle
+- New
+- Ready/runnable (aka waiting area)
+	- Thread must move from 'new' state to 'ready' state in order to be able to do stuff.
+	- This only happens when you call 'start' method on the thread object.
+- 'Running' state 
+	- NOTE threads can move from 'running' back to 'runnable'; it is 'bidirectional'.
+		- Why? Consider
+		
+				Thread1 with priority '7'
+				Thread2 with priority '9' is created.
+
+				Thread1 should give way to Thread2, and therefore it will go back to 'ready' state.
+					- Internally, Thread1 will call 'yield' method.
+			
+			- What if threads have the same priority?
+				- OS handles it, e.g. round robin caching - thread requires 10 seconds; OS can only allocate 2. Thread does 2 seconds, then goes back to the queue, etc etc for 5 times. 
+
+
+	- Execution of 'run' method = thread has gone into 'running' state
+- 'Dead' state
+	- End of 'run' method.
+- 'Sleep/blocked' state
+	- Thread can go from 'running' state to 'sleep' state.
+
+
+==========
+'Runnable' interface
+
+class BankAccount implements Runnable{
+
+	private int balance = 1000;
+
+	private int withdraw;
+
+	public BankAccount(int withdraw){
+	
+		this.withdraw = withdraw;
+
+	}
+
+	@Override
+	public void run(){
+
+		if(balance >= withdraw){
+	
+			System.out.println(Thread.currentThread().getName() + "has withdrawn " + this.withdraw);
+
+			balance -= withdraw;
+
+		}
+		else{
+
+			System.out.println("Insufficient funds");
+
+		}
+	}
+
+}
+
+class RaceConditionDemo{
+
+	public static void main(String[] args){
+
+		BankAccount act = new BankAccount(1000);
+
+		Thread t1 = new Thread(act);	
+
+		Thread t2 = new Thread(act);	
+
+		t1.setName("First person");
+
+		t2.setName("Second person");
+
+		t1.start();
+
+		t2.start();	
+	
+	}
+
+}
+
+- 'run' method needs to be protected from multiple threads.
+- How? Synchronisation:
+
+	@Override
+	public synchronized void run(){
+
+	- What is happening?
+		- Only one thread to access object; all other threads must wait.
+	- It is thread safe. No other thread can access the method.
+		- Thread-safety means mutually exclusive lock for threads trying to access objects.
+
+- How to implement?
+	- Synchronised methods (see above)
+	- Synchronised blocks
+
+		public void withdraw(){
+
+			// Method logic etc etc
+
+			synchronized(object)[ // Critical section
+
+			}
+
+			// The rest of the method logic etc etc
+		}
+- HashTable is synchronized and thread-safe; HashMap is not.
+- Vector is synchronized and thread-safe; ArrayList is not.
+
+==================
+Multithreading challenges
+- Race condition (see above)
+- Starvation
+	- e.g. One thread takes over database connection and would not release it. 'Greedy'.
+		- Use 'thread-dump' to analyse.
+- LiveLock
+	- Thread will continue to do the same job but cannot proceed to the next job because no notification from other threads.
+	- Threads must communicate with each other.
+- Deadlock
+	- Happens when two or more threads are all waiting for a blocked resource. Mutually blocked resources.
+
+Shared memory; shared objects; shared resources (e.g. database connection)
+
+===========
+'callable' interface
+- Example:
+
+class NewTask implements Callable<String>{
+
+	@Override
+	public String call(){ // call method always returns an object to calling area; 'run' only executes the code
+	// Therefore the return type must be the same as the specified generic type in 'Callable<>'. In this case it is 'String'
+
+		return "Welcome";
+
+	}
+
+}
+
+class CallableDemo{
+
+	public static void main(String[] args){
+
+		ExecutorService es = Executors.newFixedThreadPool(4); // This type is required for 'Callable' object
+		// This is the new way; no need to create your own threads. It does it for you.
+		
+		NewTask nt1 = new NewTask();
+
+		/*
+
+			Future vs CompletableFuture
+			Blocking vs Non-blocking
+		*/
+		Future<String> result = es.submit(nt1);
+
+		try{
+			System.out.println(result.get());
+		}
+		catch(InterruptedException e){
+
+			System.out.println(e);
+
+		}
+		catch(ExecutionException e){
+
+			System.out.println(e);
+
+		}	
+
+	}
+
+}
+
+	- NOTE 'Executorservice' expects tasks to run; even if you don't supply it with 'es.submit' calls, it will still run in the background.
+		- You need to explicitly close it via 'es.shutdown()';
+
+
+See further:
+- Concurrent collections, e.g. ConcurrentHashMap
+- ForkJoinFramework (framework that dynamically creates and deallocates threads for you)
+	- Used in Java Streams API: Collections.parallelStream() and stream().parallel() 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
