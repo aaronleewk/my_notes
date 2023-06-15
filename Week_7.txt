@@ -824,9 +824,12 @@ Example REST API
 
 
 	=======
-// Additional stuff
+	Additional ORM annotations
 
+	@Embeddable // Spring JPA will not create a separate table for this class. Instead this entity can be injected into other entities.
+	public class address{
 
+	}
 
 	@MappedSuperclass // Will not create table for superclass; superclass is only there to supply common fields.
 	public class ElectornicDevice{
@@ -854,11 +857,6 @@ Example REST API
 
 		@Embedded
 		private Address address;
-
-	}
-
-	@Embeddable // Spring JPA will not create a separate table for this class. Instead this entity can be injected into other entities.
-	public class address{
 
 	}
 

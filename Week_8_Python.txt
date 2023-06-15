@@ -51,6 +51,34 @@ Language features:
 	- Equality checks value
 	- Identity checks memory location
 
+============
+Collections/Data structures
+
+Built-in Collections:
+- List  
+	Mutable
+	Store any data type
+	Created using square brackets
+	Allow duplicates
+- Tuples 
+	Immutable
+	Store any data type
+	Allow duplicates
+	Created using round brackets hashable
+- Dictionary
+	Store Key-value pair
+	immutable
+	Keys cannot beduplicates
+	ordered creates using brackets
+- Set
+	Immutable unordered unindexed
+	doesn't allow duplicates
+	created using curly brackets
+
+
+User-Define Collections:
+- e.g Array (same data type), Stack (LIFO), Queue(FIFO)
+
 ==========
 - Tuples are preferred for heterogeneous collections (similar to C structs); lists are preferred for homogeneous collections (similar to C arrays). 
 - Floating point arithmetic in Python is handled differently than Java:
@@ -66,4 +94,63 @@ Functions
 	- 
 - Return value annotation
 	- Started in Python 3.0
+
+==========
+Python opp
+
+- Single Inheritance
+
+class A:
+	<body>
+	
+class B(A):
+	<body>
+
+-Multiple Inheritance
+
+class A:
+	<body>
+	
+class B:
+	<body>
+	
+
+class C(A,B):
+	<body>
+
+- Multi-level
+
+class A:
+	<body>
+	
+class B(A):
+	<body>
+	
+
+class C(B):
+	<body>
+	
+- Hierarchial Inheritance
+
+class A:
+	<body>
+	
+class B(A):
+	<body>
+	
+class C(A):
+	<body>
+
+- Hybrid Inheritance - Combination of Multi-leval and multiple
+
+class A:
+	<body>
+	
+class B(A):
+	<body>
+
+class C(A, B):
+	<body>
+
+
 
