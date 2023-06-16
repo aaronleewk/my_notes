@@ -350,18 +350,89 @@ See further:
 - ForkJoinFramework (framework that dynamically creates and deallocates threads for you)
 	- Used in Java Streams API: Collections.parallelStream() and stream().parallel() 
 
+==========
+Microservices
 
+How are services provided?
+- Desktop app
+- Server (Monolithic)
+- Server (Modular)
 
+- Server
+	- Break the functionality down into modules:
+		- 'Modules' concept is a high-level conceptualisation (so the specification, NOT the endpoint or service - that is developer terminology). Consider: Book Store app:
+			- Customer
+			- Basket
+			- Book
+			- Payment
+		- Controller and service layers etc implement these modules.
+	- Monolithic vs microservices
+		- Monolithic: All modules are implemented by into one executable.
+			- Drawbacks:
+				- Maintainability
+				- Scalability
+			- NOTE How is multithreading related to microservices?
+		- Microservices
+			- Scoped to one module, so resource constraints do not affect other modules.
 
+- Cloud services
+	- Definition: Sharing resources over a network.
+	- Cloud provider provides a way to manage services (either manual or automated management)
+		- 
+	- Allows:
+		- Rapid resourcing
+	- Drawbacks
+		- Complexity: 
+			- Service communication: Microservices have to communicate with each other.
+			- Service discovery: Keeping track of services is hard - In order to make a request, your code needs to know the network location (IP address and port) of a service instance, which can change as new services get spawned.
+			- Service cost: Cloud provider usage.
 
+========
+Spring Cloud
+- Contains 'service registry'
+	- All apps/microservices must register with the registry. This allows them to communicate with each other. 
+	- What is it for?
+		- It persists service details and make them available.
+	- 'Eureka server' was creataed by Netflix to support service discovery and communication. 'Apache kafka' is another one. 
 
+- Eclipse setup
+	- Create new maven project
+	- In 'New Spring Starter Project Dependencies', search for 'Eureka Server' in the 'Available' section.
 
+- Setting up the registry:
+	- MUST set 'eureka.client.register-with-eureka' and 'eureka.client.fetch-registry' to 'false', otherwise your web app will be registered with the registry.
+	- Use '@EurekaServer' annotation
 
+- Now the full app:
+	- This time, select 'Eureka discovery' instead of 'Eureka Server'
+	- Must add '@EnableDiscoveryClient" to the 'static void main' class.
+		- How is it different from the previous
+			- '@EnableEurekaServer' just registers itself 
 
+- How can a microservice communicate with other microservices?
+	- Using lightweight protocols, e.g. Https
+	- Spring framework provides 'RestTemplate' class to do so.
+		- Firstly, services register with a service registry, e.g. Eureka server.
+		- Create a RestTemplate object in your service's controller layer.
+		- Then use 'RestTemplate' methods:
+			- exchange(URL, http method, return item class, e.g. ResponseEntity<List<Employee>>.class)
 
+- RestTemplate
+	- What if URL is dynamic? That's where messenging services such as Apache Kafka come into play. 
 
+Annotations
+- '@SpringBootApplication' is a combination of:
+	- @Configuration (so the 'main' class can also be a source of beans definition)	
+	- @EnableAutoConfiguration
+	- @ComponentScan
+- '@Component'
+	- Allows Spring to detect custom beans automatically. 
+		- Without having to write any explicit code, Spring will: Scan our application for classes annotated with @Component. Instantiate them and inject any specified dependencies into them. Inject them wherever needed.
+	- If your class is in another package, e.g. com.ab.service is the main package, and com.models.entities is another package, then use '@ComponentScan({"com.models.entities"}) in your calling/autowired class.
 
-
+=========
+Why use OOP for backend?
+- Modular: You can plug-and-play classes and packages
 
 
 
