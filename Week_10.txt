@@ -1,0 +1,76 @@
+19/06/2023
+=========
+
+AWS
+
+- Firewall
+	- Default is all 
+	- Can limit to certain IP address, for the below reasons:
+		- Communication between microservices
+		- Company proxy settings
+	- This is done by infrastructure engineers.
+
+6 cloud computing features:
+- https://docs.aws.amazon.com/whitepapers/latest/aws-overview/six-advantages-of-cloud-computing.html
+
+EC2 Instance panel:
+- IP address two types: Public and private
+	- Public: Exposed to internet
+	- Private: You can ping it.
+- Select 'security'
+	- Now seect 'Security Group'
+	- Select 'Edit inbound rules'
+	- Port range is 22 as that is the default port for SSH.
+		- But you can create 'Type' = 'All traffic'
+- Back to main panel: Select 'connect'
+	- Then select 'SSH client' (the third tab)
+	- Copy the SSH command and paste in your terminal.
+	- Troubleshooting
+		- If 'connection timed out', then the network you are on is limiting outbound requests to certain sites.
+
+- Every time you stop and re-launch an instance, the IP address changes (if you're on free tier).
+	- Paiid tier allows for persistent IP address.
+
+
+================
+Java setup
+- Once you have your instance set up, install the following:
+	- Java 11 (this version specifically because
+	- Maven
+	- Jenkins
+	- Tomcat 9
+
+
+
+
+===========
+Jenkins can automatically pull github repos and launch it.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

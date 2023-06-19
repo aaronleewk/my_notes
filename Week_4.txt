@@ -143,7 +143,7 @@ Lambda Expressions: The implementation
 
 	interface IClass{ // This is a functional interface
 
-		public int add(int a, int b)
+		public int add(int a, int b);
 
 	}
 

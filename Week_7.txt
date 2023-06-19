@@ -21,11 +21,12 @@ Spring Data JPA (Java Persistence API)
 	- So JPA is used to abstract away the persistence logic, i.e. developers do not need to write SQL queries.
 - You can focus on the higher layers instead of coding the DAO.
 
-
 Spring JDBC demo:
 - 'application.properties' file is the config file Spring reads from; it contains connection properties such as username, passwords etc.
 	- This means you don't have to manually write the 'utilities.connection' class with the connection url and its try-catch blocks. 
 	- You can just declaratively state the attributes in the config file"
+	- It is stored in src/main/resources
+	- NOTE the 'spring.datasource.url' is the location of the database.
 	
 	==========
 	// application.properties
@@ -301,6 +302,7 @@ Compare to:
 	// For monolithic webpage:
 	spring.mvc.view.prefix=/WEB-INF/view/
 	spring.mvc.view.suffix=.jsp
+
 	========
 	// Entities
 	
@@ -560,7 +562,7 @@ Spring MVC
 	import com.ab.entities.Customer
 
 	@Repository
-	public interface CustomerRepository extends JpaRepository<Customer, Integer>{ // NOTE 'Integer' must be an object for JpaRepository
+	public interface CustomerRepository extends JpaRepository<Customer, Integer>{ // NOTE 'Integer' must be an object for JpaRepository; the 'Integer' field specifies to JPA the type of the Id field of the class. In this case. 'Customer' class has id of type 'Integer'.
 
 		// The below methods are all from JpaRepository interface
 
@@ -869,3 +871,8 @@ Example REST API
 		private String vehicleName;
 	}
 
+@Inheritance vs @MappedSuperclass:
+- MappedSuperClass must be used to inherit properties, associations, and methods.
+- Entity inheritance must be used when the entity is present in another entity, ie. dependency injection.
+- e.g. there are several kinds of messages: SMS messages, email messages, or phone messages. A person can also have a list of messages. In this case, Message is clearly an entity, and entity inheritance must be used.
+	- All your domain objects could have a creation date, modification date and ID, and you could thus make them inherit from a base AbstractDomainObject class. But no entity will ever have an association to an AbstractDomainObject. It will always be an association to a more specific entity: Customer, Company, whatever. In this case, it makes sense to use a MappedSuperClass.
