@@ -242,6 +242,7 @@ Spring JDBC demo:
 		}
 		
 	}
+
 	=========
 	// Main method; 'CommandLineRunner' runs that method's code before app startup.
 
@@ -571,6 +572,8 @@ Spring MVC
 		findAll
 	}
 
+	// Spring will automatically implement the interface for you. There is NO NEED to implement the JPA interface.
+	
 ======
 API Creation
 Web application vs web service:
@@ -825,6 +828,14 @@ Example REST API
 	}
 
 
+	// NOTE!! 
+	// @PathVariable vs @RequestBody vs @RequestParam
+	
+	//@PathVariable is used to tell Spring that part of the URI path is a value you want passed to your method. 
+	// @RequestParam: The variables come from form data posted to the URI, not the URI path.
+	// @RequestBody automatically deserialises the inbound HttpRequest body into a Java object
+
+
 	=======
 	Additional ORM annotations
 
@@ -876,3 +887,17 @@ Example REST API
 - Entity inheritance must be used when the entity is present in another entity, ie. dependency injection.
 - e.g. there are several kinds of messages: SMS messages, email messages, or phone messages. A person can also have a list of messages. In this case, Message is clearly an entity, and entity inheritance must be used.
 	- All your domain objects could have a creation date, modification date and ID, and you could thus make them inherit from a base AbstractDomainObject class. But no entity will ever have an association to an AbstractDomainObject. It will always be an association to a more specific entity: Customer, Company, whatever. In this case, it makes sense to use a MappedSuperClass.
+
+=========
+
+https://stackoverflow.com/questions/16634048/jpa-hibernate-difference-mappedsuperclass-and-entity-abstract-class
+
+A MappedSuperclass uses inheritance for field and code reuse. For example, if you want all your entities to have a Long id and a Long version field, you could make them all extend a BaseEntity class annotated with MappedSuperclass containing these two fields, along with their getters, setters, etc. But you would never have an entity having an association with a BaseEntity: the association would always be with a specific subclass of BaseEntity.
+
+A parent entity is used for "entity polymorphism". For example, you could imagine having two kinds of Message: an EmailMessage and a SmsMessage. Both would contain a source, a target, and a body. But EmailMessage would have an email address and a subject, whereas SmsMessage would have a phone number.
+
+And you could imagine having a Person entity containing a collection of sent messages, of type Message. The collection would in fact contain instances of EmailMessage and of SmsMessage. Hibernate would decide which one to instantiate depending on the inheritance strategy used for the inheritance mapping:
+
+all the messages could be stored in the same table, and Hibernate would use a discriminator column containing the type of the message
+the EmailMessage could be stored in one table, and the SmsMessage stored in another one
+or the fields common to both entities (source, target, body) could be stored in a comon table, the fields specific to EmailMessage in a second table, and the fields specific to SmsMessage in a third table.

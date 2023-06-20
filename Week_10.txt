@@ -48,7 +48,60 @@ Jenkins can automatically pull github repos and launch it.
 
 
 
+======
+Next.js
+--------
+Client-side navigation means that the page transition happens using JavaScript, which is faster than the default navigation done by the browser as it does not require the whole page to be reloaded. If you’ve used <a href="…"> instead of <Link href="…"> and did this, the background color will be cleared on link clicks because the browser does a full refresh.
 
+--------
+favicon (short for "favorites icon") can be see in the "favorites" or "bookmarks" lists in browsers.
+
+-------
+
+_app.js:
+
+export default function App({ Component, pageProps }) {
+  return <Component {...pageProps} />;
+}
+
+This is is a top-level React component that wraps all the pages in your application. You can use this component to keep state when navigating between pages, or to add global styles.
+
+-----------
+
+static assets, like images, are stored in the top-level public directory. 
+Files inside public can be referenced from the root of the application (i.e. '/')
+
+-----
+
+Static Generation vs Server-side Rendering vs Client-side Rendering
+- Server vs client components:
+	- Server Components have no React state (since they're not interactive)
+- If the majority of components are non-interactive, they can be rendered on the server as Server Components. For smaller pieces of interactive UI, we can 'sprinkle' in Client Components. This is a 'server-first' approach.
+
+
+- Static generation (with or without data)
+	- Page is built once 
+	- Static generation with data: Sometimes HTML should not be rendered without first fetching some external data. Basically: the webpage has some data dependencies. e.g. blog post
+	- To use static site generation, us 'getStaticProps()'
+- Server-side rendering: Generates HTML on each request.
+	- To use Server-side Rendering, you need to export getServerSideProps instead of getStaticProps from your page.
+- Client-side Rendering
+	- Rendering components: e.g. 'onClick' to change colour
+		- "use client" sits between server-only and client code. It's placed at the top of a file, above imports, to define the cut-off point where it crosses the boundary from the server-only to the client part. Once "use client" is defined in a file, all other modules imported into it, including child components, are considered part of the client bundle.
+	- Rendering data
+		- For frequently updating data, 'useSWR' is a perfect fit: just import useSWR and use the hook inside any components that use the data.
+
+		import useSWR from 'swr'
+	
+		const fetcher = (url) => fetch(url).then((res) => res.json());
+
+		function Profile() {
+			const { data, error, isLoading } = useSWR('/api/user', fetcher)
+			
+			if (error) return <div>failed to load</div>
+			if (isLoading) return <div>loading...</div>
+			return <div>hello {data.name}!</div>
+		}
 
 
 
