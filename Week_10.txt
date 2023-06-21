@@ -22,12 +22,16 @@ EC2 Instance panel:
 	- Select 'Edit inbound rules'
 	- Port range is 22 as that is the default port for SSH.
 		- But you can create 'Type' = 'All traffic'
+	- NOTE: YOU NEED TO OPEN INDIVIDUAL PORTS IN ORDER TO ACCESS IT VIA BROWSER, e.g. Jenkins uses port 8080 so you need to configure security group to add inbound rule accepting 'TCP' traffic to port range = 8080.
 - Back to main panel: Select 'connect'
 	- Then select 'SSH client' (the third tab)
 	- Copy the SSH command and paste in your terminal.
 	- Troubleshooting
 		- If 'connection timed out', then the network you are on is limiting outbound requests to certain sites.
-
+- Public IP address:
+	- In instance page 'Public IPv4 address' section.
+	- This is used to access your instance via browser.
+	- To access a particular service, you need to also specify the port number of the IP address, e.g. for Jenkins 'https://52.56.90.177:8080/'.
 - Every time you stop and re-launch an instance, the IP address changes (if you're on free tier).
 	- Paiid tier allows for persistent IP address.
 
@@ -40,13 +44,127 @@ Java setup
 	- Jenkins
 	- Tomcat 9
 
+===============
+Install Java
+- sudo add-apt-repository ppa:openjdk-r/ppa
+- sudo apt-get update
+- sudo apt-get install -y openjdk-11-jdk
 
-
+Set JAVA_HOME
+- sudo echo "JAVA_HOME=\"/usr/lib/jvm/java-11-openjdk-amd64\"" >> /etc/profile
+- sudo echo "PATH=\$JAVA_HOME/bin:\$PATH" >> /etc/profile
+- source /etc/profile
 
 ===========
+Install Maven
+
+cd /tmp ; wget https://downloads.apache.org/maven/maven-3/3.9.0/binaries/apache-maven-3.9.0-bin.tar.gz
+
+cd /tmp ; sudo tar -xzf apache-maven-3.9.0-bin.tar.gz -C  /opt/
+
+mv /opt/apache-maven-3.9.0 /opt/maven
+
+sudo echo "MAVEN_HOME=\"/opt/maven\"" >> /etc/profile
+
+sudo echo "PATH=\$MAVEN_HOME/bin:\$PATH" >> /etc/profile
+
+source /etc/profile
+
+===========
+Install Jenkins
+
+sudo wget -q -O - https://pkg.jenkins.io/debian-stable/jenkins.io.key | sudo apt-key add -
+sudo echo deb https://pkg.jenkins.io/debian-stable binary/ | sudo tee /etc/apt/sources.list.d/jenkins.list
+sudo apt-get update
+sudo apt-get install jenkins
+
+===========
+Start Jenkins server:
+
+
+sudo systemctl start jenkins
+(To check Jenkins status:) sudo systemctl status jenkins
+
+Accessing Jenkins server:
+- Go to AWS instance's public IP address, and add the port number (in Jenkin's case, it is 8080) - http://52.56.90.177:8080/
+- You need Jenkins password to access the setup wizard via browser (use EC2 instance's public IP address).
+	- sudo cat /var/lib/jenkins/secrets/initialAdminPassword
+
+
 Jenkins can automatically pull github repos and launch it.
 
+======
+Install Tomcat server
+- wget https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.73/bin/apache-tomcat-9.0.73.tar.gz -P /tmp
+- cd /tmp ; tar -xzf /tmp/apache-tomcat-9.0.73.tar.gz -C /opt
+- mv /opt/apache-tomcat-9.0.73 /opt/tomcat
 
+Configure Tomcat server
+- You must change the port number as the default is 8080 which is already taken by Jenkins.
+- In /opt/tomcat/conf/server.xml, change:
+	<Connector port="8085" protocol="HTTP/1.1"
+               connectionTimeout="20000"
+               redirectPort="8443" />
+Enable port for AWS instance
+- edit inbound security rules in 'security groups'
+
+Start Tomcat server
+- To start: /opt/tomcat/bin/startup.sh
+- To validate: ps -ef|grep tomcat
+
+Add Tomcat users
+	
+	<tomcat-users>
+	
+	
+	 <role rolename="manager-gui"/>
+	  <role rolename="manager-script"/>
+	  <user username="tomcat" password="password" roles="manager-gui,manager-script"/>
+	  <user username="kpashindla" password="password" roles="manager-gui,manager-script"/>
+	
+	
+	</tomcat-users> 
+
+Enable Manager access
+- Edit: /opt/tomcat/webapps/manager/META-INF/context.xml
+	
+	<Context antiResourceLocking="false" privileged="true" >
+	  <CookieProcessor className="org.apache.tomcat.util.http.Rfc6265CookieProcessor"
+	                   sameSiteCookies="strict" />
+					   
+					   
+	  <!-- 
+	      THIS NEEDS TO BE COMMENTED OUT
+	
+		<Valve className="org.apache.catalina.valves.RemoteAddrValve"
+			allow="127\.\d+\.\d+\.\d+|::1|0:0:0:0:0:0:0:1" /> 
+	  -->
+	  
+	  <Manager sessionAttributeValueClassNameFilter="java\.lang\.(?:Boolean|Integer|Long|Number|String)|org\.apache\.catalina\.filters\.CsrfPreventionFilter\$LruCache(?:\$1)?|java\.util\.(?:Linked)?HashMap"/>
+	
+	
+	</Context>
+
+
+
+
+
+======
+What is Jenkins pipeline?
+- Steps:
+	- Compilation
+	- Code review (e.g. linting, warning tools)
+	- Testing 
+	- Code coverage
+	- Deployment
+
+
+
+- Select 'Freestyle project'
+
+Invoke top level Maven targets
+goal: Compile
+	- Runs 'mvn compile'
 
 ======
 Next.js
@@ -104,7 +222,66 @@ Static Generation vs Server-side Rendering vs Client-side Rendering
 		}
 
 
+========
+React
 
+React Fundamentals
+- VirtualDOM
+	- One of the key innovations in the React library is the idea of a virtualDOM. Whenever triggered React creates a virtual rebuild of your application and compares it to the real state of your application (the real DOM) and updates only the parts that are different speed up the updates since it isn't rebuilding parts that haven't changed. So when these changes are triggered it is known as a render.
+
+- Concepts: "mounting" (adding nodes to the DOM), "unmounting" (removing them from the DOM), and "updating" (making changes to nodes already in the DOM).
+	- Mount: The process of creating instances of React components and the DOM nodes corresponding to them, and inserting them into the DOM.
+	- Mount Flow:
+		- Create element (just a plain JS class)
+
+			let foo = React.createElement(FooComponent);
+
+			//Behind the scenes, it's just a plain class
+			{
+				type: FooComponent,
+				props: {}
+			}
+
+		- Tell React to 'mount' the element
+
+			ReactDOM.render(foo, domContainer);
+
+			// React will create an instance of the 'FooComponent' class and call its render method.
+			// This will create a div DOM node, and the component is inserted into the DOM container.
+
+
+React design
+- first break UI apart into components. 
+- Then, describe the different visual states for each component. 
+- Finally, connect your components together.
+
+What happens during React dataflow?
+- Reactive programming
+- data flows through your linked-up components,
+- React is one-way data flow  
+
+'children' prop: When parent component passes a JSX tag to a child component, the child component will receive that content in a prop called 'children'.
+
+useEffect
+
+	useEffect(setup, dependencies?)
+
+- Purpose:
+	- When you must perform side effects in a functional component, you can use the helpful useEffect hook.
+	- 
+- Setup	(and cleanup?)
+	- When your component is added to the DOM, React will run your setup function. 
+	- After every re-render, React will first run the cleanup function (if you provided it) WITH THE OLD VALUES, THEN run your setup function with the new values. 
+	- After your component is removed from the DOM, React will run your cleanup function.
+- Dependencies
+	- The list of all reactive values inside the setup code. 
+		- Reactive means they’re calculated during rendering and participate in the React data flow.
+		
+		
+		include props, state, and all the variables and functions declared directly inside your component body. 
+	- IF YOU OMIT this, your Effect will re-run after every re-render of the component.
+- Notes
+	- Empty dependency list means the function will only run when the component initializes.
 
 
 
