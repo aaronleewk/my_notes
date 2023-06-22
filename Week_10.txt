@@ -83,11 +83,13 @@ Start Jenkins server:
 
 
 sudo systemctl start jenkins
+
 (To check Jenkins status:) sudo systemctl status jenkins
 
 Accessing Jenkins server:
 - Go to AWS instance's public IP address, and add the port number (in Jenkin's case, it is 8080) - http://52.56.90.177:8080/
 - You need Jenkins password to access the setup wizard via browser (use EC2 instance's public IP address).
+	- Username is 'admin'
 	- sudo cat /var/lib/jenkins/secrets/initialAdminPassword
 
 
@@ -109,8 +111,9 @@ Enable port for AWS instance
 - edit inbound security rules in 'security groups'
 
 Start Tomcat server
-- To start: /opt/tomcat/bin/startup.sh
-- To validate: ps -ef|grep tomcat
+- START: /opt/tomcat/bin/startup.sh
+
+- VALIDATE: ps -ef|grep tomcat
 
 Add Tomcat users
 	
@@ -152,155 +155,47 @@ Enable Manager access
 ======
 What is Jenkins pipeline?
 - Steps:
-	- Compilation
-	- Code review (e.g. linting, warning tools)
-	- Testing 
-	- Code coverage
-	- Deployment
+	- First: Compilation
+	- Second: Code review (e.g. linting, warning tools)
+	- Third: Testing 
+	- Fourth: Code coverage
+	- Finally: Deployment
 
 
 
 - Select 'Freestyle project'
 
 Invoke top level Maven targets
-goal: Compile
-	- Runs 'mvn compile'
-
-======
-Next.js
---------
-Client-side navigation means that the page transition happens using JavaScript, which is faster than the default navigation done by the browser as it does not require the whole page to be reloaded. If you’ve used <a href="…"> instead of <Link href="…"> and did this, the background color will be cleared on link clicks because the browser does a full refresh.
-
---------
-favicon (short for "favorites icon") can be see in the "favorites" or "bookmarks" lists in browsers.
-
--------
-
-_app.js:
-
-export default function App({ Component, pageProps }) {
-  return <Component {...pageProps} />;
-}
-
-This is is a top-level React component that wraps all the pages in your application. You can use this component to keep state when navigating between pages, or to add global styles.
-
------------
-
-static assets, like images, are stored in the top-level public directory. 
-Files inside public can be referenced from the root of the application (i.e. '/')
-
------
-
-Static Generation vs Server-side Rendering vs Client-side Rendering
-- Server vs client components:
-	- Server Components have no React state (since they're not interactive)
-- If the majority of components are non-interactive, they can be rendered on the server as Server Components. For smaller pieces of interactive UI, we can 'sprinkle' in Client Components. This is a 'server-first' approach.
+YOU HAVE TO SET THE GOAL (the left hand value): 
+	'Compile': Runs 'mvn compile'
+	Code review
+	'Test': mvm test
+	'Packaging': 'war' or 'jar' (YOU MUST add the 
+	<packaging>war</package>
+	tag in your pom.xml file. This is because Jenkins does not know it is a war file, but Spring boot does.
+	)
+	Install: mvn clean
+	Deploy: mvm deploy
 
 
-- Static generation (with or without data)
-	- Page is built once 
-	- Static generation with data: Sometimes HTML should not be rendered without first fetching some external data. Basically: the webpage has some data dependencies. e.g. blog post
-	- To use static site generation, us 'getStaticProps()'
-- Server-side rendering: Generates HTML on each request.
-	- To use Server-side Rendering, you need to export getServerSideProps instead of getStaticProps from your page.
-- Client-side Rendering
-	- Rendering components: e.g. 'onClick' to change colour
-		- "use client" sits between server-only and client code. It's placed at the top of a file, above imports, to define the cut-off point where it crosses the boundary from the server-only to the client part. Once "use client" is defined in a file, all other modules imported into it, including child components, are considered part of the client bundle.
-	- Rendering data
-		- For frequently updating data, 'useSWR' is a perfect fit: just import useSWR and use the hook inside any components that use the data.
+Build triggers:
+- Most of the time, choose 'build after other prjects are build', then in 'project to watch' enter the previous job.
+- Github hook trigger 
+- Poll SCM:
+	- can specify schedule:
+		- Format: 5/H * * * (this is called 'cron' job like the UNIX utility)
 
-		import useSWR from 'swr'
-	
-		const fetcher = (url) => fetch(url).then((res) => res.json());
-
-		function Profile() {
-			const { data, error, isLoading } = useSWR('/api/user', fetcher)
-			
-			if (error) return <div>failed to load</div>
-			if (isLoading) return <div>loading...</div>
-			return <div>hello {data.name}!</div>
-		}
+Post build actions:
+- Record code coverage report, test results etc etc.
 
 
-========
-React
+you need to add plugin to deploy the project compiled by Jenkins to Tomcat server
+- Search in 'plugin' - 'deploy to container' (container means server)
+- In post build, select 'deploy war/ear to container'
+- Add content path (the directory), e.g. 'webapptest' will point to 44.211.134.203:8085/webapptest/
+- in 'containers' choose 'Tomcat 9.x remote'
+	- You need to add credentials (see above 'Tomcat users')
+	- IT IS SUGGESTED you add a unique ID reference, so you can reuse this identifier in other parts of the pipeline.
 
-React Fundamentals
-- VirtualDOM
-	- One of the key innovations in the React library is the idea of a virtualDOM. Whenever triggered React creates a virtual rebuild of your application and compares it to the real state of your application (the real DOM) and updates only the parts that are different speed up the updates since it isn't rebuilding parts that haven't changed. So when these changes are triggered it is known as a render.
-
-- Concepts: "mounting" (adding nodes to the DOM), "unmounting" (removing them from the DOM), and "updating" (making changes to nodes already in the DOM).
-	- Mount: The process of creating instances of React components and the DOM nodes corresponding to them, and inserting them into the DOM.
-	- Mount Flow:
-		- Create element (just a plain JS class)
-
-			let foo = React.createElement(FooComponent);
-
-			//Behind the scenes, it's just a plain class
-			{
-				type: FooComponent,
-				props: {}
-			}
-
-		- Tell React to 'mount' the element
-
-			ReactDOM.render(foo, domContainer);
-
-			// React will create an instance of the 'FooComponent' class and call its render method.
-			// This will create a div DOM node, and the component is inserted into the DOM container.
-
-
-React design
-- first break UI apart into components. 
-- Then, describe the different visual states for each component. 
-- Finally, connect your components together.
-
-What happens during React dataflow?
-- Reactive programming
-- data flows through your linked-up components,
-- React is one-way data flow  
-
-'children' prop: When parent component passes a JSX tag to a child component, the child component will receive that content in a prop called 'children'.
-
-useEffect
-
-	useEffect(setup, dependencies?)
-
-- Purpose:
-	- When you must perform side effects in a functional component, you can use the helpful useEffect hook.
-	- 
-- Setup	(and cleanup?)
-	- When your component is added to the DOM, React will run your setup function. 
-	- After every re-render, React will first run the cleanup function (if you provided it) WITH THE OLD VALUES, THEN run your setup function with the new values. 
-	- After your component is removed from the DOM, React will run your cleanup function.
-- Dependencies
-	- The list of all reactive values inside the setup code. 
-		- Reactive means they’re calculated during rendering and participate in the React data flow.
-		
-		
-		include props, state, and all the variables and functions declared directly inside your component body. 
-	- IF YOU OMIT this, your Effect will re-run after every re-render of the component.
-- Notes
-	- Empty dependency list means the function will only run when the component initializes.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+Groovy:
+- Instead of manually configuring Jenkins pipeline, you can write declarative scripts.
