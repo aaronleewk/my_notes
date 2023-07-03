@@ -1,0 +1,12 @@
+
+
+03/07/2023
+- This morning I started by looking through my react codebase.
+- I came across, in a component copied from online, a 'setState' that accepted a function instead of just a value.
+- I thus googled 'setState' which brought me to the React docs.
+- The react docs emphasised composition over inheritance, so I naturally googled that too.
+- But first I tried to analogise the problem to my existing knowledge so as to see if I can figure out the problem without doing research.
+- I looked up 'composition vs dependency injection' which brought up the idea of 'composability' of software (this particular Stackoverflow answer was very insightful: https://stackoverflow.com/a/48735131)
+- This reminded me of the book 'composing software' which I brought up to browse.
+- The author's name is Eric Elliot. I liked the book so I looked up his other stuff, e.g. googling 'Eric Elliot hackernews'.
+- I came across higher-order components and Redux.
